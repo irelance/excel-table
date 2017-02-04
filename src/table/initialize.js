@@ -223,6 +223,9 @@ ExcelTable.Table.initialize = function (options) {
             } else if (e.keyCode == 46) {//deleting
                 table.action.delete().render();
                 table.history.change();
+            } else if ((e.metaKey || e.ctrlKey) && e.keyCode == 65) {//select all
+                table.target.find('.excel-table-dig').trigger('click');
+                e.preventDefault();
             } else if ((e.metaKey || e.ctrlKey) && e.keyCode == 88) {//cutting
                 table.action.copy().action.delete().render();
                 table.history.change();

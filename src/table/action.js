@@ -225,7 +225,7 @@ ExcelTable.Table.Action = function (parent) {
             err = (last - first) / (number - 1) * number;
             err = err ? err : 0;
             for (i = sRange.eRow + 1; i <= eRange.eRow; i++) {
-                switch (parent.result[row][i - length].type) {
+                switch (parent.result[i - length][col].type) {
                     case 'function':
                         ExcelTable.unit.setValue(parent.result[i][col], parent.result[i - length][col].value);
                         break;
@@ -262,7 +262,7 @@ ExcelTable.Table.Action = function (parent) {
             err = (last - first) / (number - 1) * number;
             err = err ? err : 0;
             for (i = eRange.sCol; i < sRange.sCol; i++) {
-                switch (parent.result[row][i - length].type) {
+                switch (parent.result[row][i + length].type) {
                     case 'function':
                         ExcelTable.unit.setValue(parent.result[row][i], parent.result[row][i + length].value);
                         break;
@@ -299,7 +299,7 @@ ExcelTable.Table.Action = function (parent) {
             err = (last - first) / (number - 1) * number;
             err = err ? err : 0;
             for (i = eRange.sRow; i < sRange.sRow; i++) {
-                switch (parent.result[row][i - length].type) {
+                switch (parent.result[i + length][col].type) {
                     case 'function':
                         ExcelTable.unit.setValue(parent.result[i][col], parent.result[i + length][col].value);
                         break;
