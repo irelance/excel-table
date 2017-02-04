@@ -3,18 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="../jquery-1.11.1.min.js"></script>
+    <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
     <script src="require.js"></script>
     <script src="src/unit.js"></script>
     <script src="src/table.js"></script>
     <script src="src/template.js"></script>
     <script src="src/calculator.js"></script>
+    <script src="src/table/action.js"></script>
+    <script src="src/table/initialize.js"></script>
+    <script src="src/table/history.js"></script>
     <script>
+        function getDefaultStyle(elem, attribute) {
+            return elem.currentStyle ? elem.currentStyle[attribute] : document.defaultView.getComputedStyle(elem, false)[attribute];
+        }
         elementAbsoluteStation = function (elem, station) {
             if (!station) {
                 station = {left: 0, top: 0};
             }
-            if (elem.offsetParent != null) {
+            if (elem.offsetParent != null && getDefaultStyle(elem.offsetParent, 'position') != 'relative') {
                 station = elementAbsoluteStation(elem.offsetParent, station);
             }
             station.left += elem.offsetLeft;
@@ -67,6 +73,9 @@
         .excel-table-unit.active {
             background: #acf;
         }
+        .excel-table-unit.active.select {
+            background: #eee;
+        }
 
         .w, .s {
             position: absolute;
@@ -101,10 +110,16 @@
         .excel-table-change-lines .d {
             background: #f00;
         }
+
+        .clipboard {
+            display: none;
+        }
     </style>
 </head>
 <body>
+<button>test</button>
 <div id="table"></div>
+<pre></pre>
 <script src="index.js"></script>
 </body>
 </html>

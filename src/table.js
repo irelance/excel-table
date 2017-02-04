@@ -12,53 +12,72 @@ ExcelTable.Table = function () {
         width: 0,
         height: 0,
         status: false,
-        row: 0,
-        col: 0,
-        render: function (row, col) {
+        active: {
+            row: 0,
+            col: 0
+        },
+        range: {
+            sRow: 0,
+            eRow: 0,
+            sCol: 0,
+            eCol: 0
+        },
+        changeActive: function (row, col) {
+            this.active.row = row;
+            this.active.col = col;
+            return this;
+        },
+        changeRange: function (row, col) {
             var self = this.selectLines,
-                change = this.changeLines,
+                change = this.changeLines;
+            self.range.sCol = self.active.col;
+            self.range.eCol = self.active.col;
+            self.range.sRow = self.active.row;
+            self.range.eRow = self.active.row;
+            if (self.active.col > col) {
+                self.range.sCol = col;
+            } else {
+                self.range.eCol = col;
+            }
+            if (self.active.row > row) {
+                self.range.sRow = row;
+            } else {
+                self.range.eRow = row;
+            }
+            change.sRange = $.extend(true, change.sRange, self.range);
+            change.eRange = $.extend(true, change.eRange, self.range);
+            return self;
+        }.bind(this),
+        render: function () {
+            var self = this.selectLines,
                 rows = this.table.find('.excel-table-row'),
                 cols = this.table.find('.excel-table-col'),
                 units = this.table.find('.excel-table-unit');
             rows.removeClass('active');
             cols.removeClass('active');
-            units.removeClass('active').removeAttr('style');
-            change.col.start = self.col;
-            change.col.end = self.col;
-            change.row.start = self.row;
-            change.row.end = self.row;
-            if (self.col > col) {
-                change.col.start = col;
-            } else {
-                change.col.end = col;
-            }
-            if (self.row > row) {
-                change.row.start = row;
-            } else {
-                change.row.end = row;
-            }
-            self.height = 0;
-            self.width = 0;
-            for (var i = change.col.start; i <= change.col.end; i++) {
-                $(cols[i]).addClass('active');
-                for (var j = change.row.start; j <= change.row.end; j++) {
-                    $(rows[j]).addClass('active');
+            units.removeClass('active').removeClass('select');//.removeAttr('style');
+            rows.slice(self.range.sRow, self.range.eRow + 1).addClass('active');
+            cols.slice(self.range.sCol, self.range.eCol + 1).addClass('active');
+            for (var i = self.range.sCol; i <= self.range.eCol; i++) {
+                for (var j = self.range.sRow; j <= self.range.eRow; j++) {
                     $(units[i + j * (cols.length)]).addClass('active');
-                    if (i == change.col.start) {
-                        self.height += $(units[i + j * (cols.length)]).height() + 2;
-                    }
-                    if (j == change.row.start) {
-                        self.width += $(units[i + j * (cols.length)]).width() + 2;
-                    }
                 }
             }
-            $(units[self.col + self.row * (cols.length)]).removeClass('active');
-            ExcelTable.template.subTable.setPosition(self, units, change.col.start, change.row.start, cols.length);
+            $(units[self.active.col + self.active.row * (cols.length)]).addClass('select').trigger('focus');
+            ExcelTable.template.subTable.setWidth(self, cols, self.range.sCol, self.range.eCol);
+            ExcelTable.template.subTable.setHeight(self, rows, self.range.sRow, self.range.eRow);
+            ExcelTable.template.subTable.setPosition(self, units, self.range.sCol, self.range.sRow, cols.length);
             self.target.find('.dot').css({
                 top: self.top + self.height - 2,
                 left: self.left + self.width - 2
             });
             ExcelTable.template.subTable.outLine(self);
+        }.bind(this),
+        getActive: function () {
+            var self = this.selectLines,
+                unit = $(this.table.find('.excel-table-unit')[self.active.col + self.active.row * (this.columns + 1)]);
+            unit.trigger('focus');
+            return unit;
         }.bind(this)
     };
     this.changeLines = {
@@ -68,52 +87,66 @@ ExcelTable.Table = function () {
         width: 0,
         height: 0,
         status: false,//move dot false
-        row: {
-            start: 0,
-            end: 0
+        sRange: {
+            sRow: 0,
+            eRow: 0,
+            sCol: 0,
+            eCol: 0
         },
-        col: {
-            start: 0,
-            end: 0
+        eRange: {
+            sRow: 0,
+            eRow: 0,
+            sCol: 0,
+            eCol: 0
         },
-        direction: 'middle',//horizontal vertical middle
+        direction: 'horizontal',//horizontal vertical
         type: 'increase',//increase decrease remove
-        renderMove: function (row, col) {
+        move: function (row, col) {
+            var self = this.changeLines;
+            self.eRange.sCol = col;
+            if (self.eRange.sCol < 0) {
+                self.eRange.sCol = 0;
+            }
+            self.eRange.eCol = self.eRange.sCol - self.sRange.sCol + self.sRange.eCol;
+            if (self.eRange.eCol > this.columns) {
+                self.eRange.eCol = this.columns;
+                self.eRange.sCol = self.eRange.eCol + self.sRange.sCol - self.sRange.eCol;
+            }
+            self.eRange.sRow = row;
+            if (self.eRange.sRow < 0) {
+                self.eRange.sRow = 0;
+            }
+            self.eRange.eRow = self.eRange.sRow - self.sRange.sRow + self.sRange.eRow;
+            if (self.eRange.eRow > this.rows) {
+                self.eRange.eRow = this.rows;
+                self.eRange.sRow = self.eRange.eRow + self.sRange.sRow - self.sRange.eRow;
+            }
+            return self;
+        }.bind(this),
+        render: function (row, col) {
             var self = this.changeLines,
                 rows = this.table.find('.excel-table-row'),
                 cols = this.table.find('.excel-table-col'),
                 units = this.table.find('.excel-table-unit');
-            var sCol = col;
-            if (sCol < 0) {
-                sCol = 0;
-            }
-            var eCol = sCol - self.col.start + self.col.end;
-            if (eCol > this.columns) {
-                eCol = this.columns;
-                sCol = eCol + self.col.start - self.col.end;
-            }
-            var sRow = row;
-            if (sRow < 0) {
-                sRow = 0;
-            }
-            var eRow = sRow - self.row.start + self.row.end;
-            if (eRow > this.rows) {
-                eRow = this.rows;
-                sRow = eRow + self.row.start - self.row.end;
-            }
-            ExcelTable.template.subTable.setWidth(self, cols, sCol, eCol);
-            ExcelTable.template.subTable.setHeight(self, rows, sRow, eRow);
-            ExcelTable.template.subTable.setPosition(self, units, sCol, sRow, cols.length);
+            ExcelTable.template.subTable.setWidth(self, cols, self.eRange.sCol, self.eRange.eCol);
+            ExcelTable.template.subTable.setHeight(self, rows, self.eRange.sRow, self.eRange.eRow);
+            ExcelTable.template.subTable.setPosition(self, units, self.eRange.sCol, self.eRange.sRow, cols.length);
             ExcelTable.template.subTable.outLine(self);
+            return self;
         }.bind(this),
-        renderDot: function (row, col) {
+        afterAction: function () {
             var self = this.changeLines,
-                rows = this.table.find('.excel-table-row'),
-                cols = this.table.find('.excel-table-col'),
-                units = this.table.find('.excel-table-unit'),
-                position;
-            var tCol = col - self.col.end;
-            var tRow = row - self.row.end;
+                select = this.selectLines;
+            select.range = $.extend(true, select.range, self.eRange);
+            self.sRange = $.extend(true, self.sRange, self.eRange);
+            select.active.row = select.range.sRow;
+            select.active.col = select.range.sCol;
+            return this;
+        }.bind(this),
+        dot: function (row, col) {
+            var self = this.changeLines;
+            var tCol = col - self.sRange.eCol;
+            var tRow = row - self.sRange.eRow;
             if (tCol * tRow >= 0) {
                 if (Math.abs(tCol) > Math.abs(tRow)) {
                     self.direction = 'horizontal';
@@ -125,47 +158,37 @@ ExcelTable.Table = function () {
             } else {
                 self.direction = 'vertical';
             }
-            self.top = -2 - 8;
-            self.left = -2 - 8;
-            position = elementAbsoluteStation(units[self.col.start + self.row.start * (this.columns + 1)]);
+            self.eRange = $.extend(true, self.eRange, self.sRange);
             if (self.direction == 'horizontal') {
-                if (self.col.end <= col) {
+                if (self.sRange.eCol <= col) {
                     self.type = 'increase';
-                    ExcelTable.template.subTable.setWidth(self, cols, self.col.start, col);
-                } else if (self.col.start > col) {
+                    self.eRange.eCol = col;
+                } else if (self.sRange.sCol > col) {
                     self.type = 'decrease';
-                    ExcelTable.template.subTable.setWidth(self, cols, col, self.col.end);
-                    position = elementAbsoluteStation(units[col + self.row.start * (this.columns + 1)]);
+                    self.eRange.sCol = col;
                 } else {
                     self.type = 'remove';
-                    ExcelTable.template.subTable.setWidth(self, cols, self.col.start, col);
+                    self.eRange.eCol = col;
                 }
-                ExcelTable.template.subTable.setHeight(self, rows, self.row.start, self.row.end);
             } else {
-                if (self.row.end <= row) {
+                if (self.sRange.eRow <= row) {
                     self.type = 'increase';
-                    ExcelTable.template.subTable.setHeight(self, rows, self.row.start, row);
-                } else if (self.row.start > row) {
+                    self.eRange.eRow = row;
+                } else if (self.sRange.sRow > row) {
                     self.type = 'decrease';
-                    ExcelTable.template.subTable.setHeight(self, rows, row, self.row.end);
-                    position = elementAbsoluteStation(units[self.col.start + row * (this.columns + 1)]);
+                    self.eRange.sRow = row;
                 } else {
                     self.type = 'remove';
-                    ExcelTable.template.subTable.setHeight(self, rows, self.row.start, row);
+                    self.eRange.eRow = row;
                 }
-                ExcelTable.template.subTable.setWidth(self, cols, self.col.start, self.col.end);
             }
-            self.top += position.top;
-            self.left += position.left;
-            ExcelTable.template.subTable.outLine(self);
+            return self;
         }.bind(this)
     };
     this.rows = 0;
     this.columns = 0;
     this.units = [];
     this.result = [];
-    this.sort = function () {
-    };
     this.dimOne2Two = function () {
         this.result = [];
         this.units.forEach(function (v) {
@@ -180,44 +203,6 @@ ExcelTable.Table = function () {
         unit.id = this.units.length;
         this.units.push(unit);
     };
-    this.insertRow = function (num) {
-        var i = 0, j = 0;
-        if (!num || num > this.rows) {
-            num = this.rows + 1;
-        }
-        if (num < 0) {
-            num = 0;
-        }
-        for (i = 0; i < this.columns; i++) {
-            this.createUnit(num, i);
-        }
-        for (i = num; i < this.rows; i++) {
-            for (j = 0; j < this.columns; j++) {
-                this.units[this.result[i][j]].row++;
-            }
-        }
-        this.rows++;
-        this.render();
-    };
-    this.insertColumn = function (num) {
-        var i = 0, j = 0;
-        if (!num || num > this.columns) {
-            num = this.columns + 1;
-        }
-        if (num < 0) {
-            num = 0;
-        }
-        for (i = 0; i < this.rows; i++) {
-            this.createUnit(num, i);
-        }
-        for (i = num; i < this.columns; i++) {
-            for (j = 0; j < this.rows; j++) {
-                this.units[this.result[i][j]].columns++;
-            }
-        }
-        this.columns++;
-        this.render();
-    };
     this.render = function () {
         this.dimOne2Two();
         var result = '<tbody>';
@@ -228,11 +213,11 @@ ExcelTable.Table = function () {
                 try {
                     unit.result = this.calculate(unit.value);
                 } catch (err) {
-                    console.log('execute to many times');
+                    console.log(err);
                     unit.result = NaN;
                 }
                 result += '<td><div class="excel-table-unit" data-row="' + unit.row +
-                    '" data-col="' + unit.column + '" tabindex="1">' + unit.result +
+                    '" data-col="' + unit.column + '" tabindex="1" contenteditable="true">' + unit.result +
                     '</div></td>';
             }.bind(this));
             result += '</tr>';
@@ -246,7 +231,7 @@ ExcelTable.Table = function () {
         result = '<table>' + header + result + '</table>';
         this.table.find('table').remove();
         this.table.append(result);
-        this.selectLines.render(this.changeLines.row.end, this.changeLines.col.end);
+        this.selectLines.render();
     };
     this.times = 0;
     this.calculate = function (value) {
@@ -277,7 +262,7 @@ ExcelTable.Table = function () {
             eval('var ' + i.toUpperCase() + '=ExcelTable.calculator.functions.public.' + i);
         }
         var result = value;
-        if (value[0] == '=' && value.length > 1) {
+        if (ExcelTable.calculator.isExpression(value)) {
             try {
                 eval('result' + value);
             } catch (error) {
@@ -286,242 +271,7 @@ ExcelTable.Table = function () {
         }
         return result;
     };
-    this.init = function (options) {
-        var table = this;
-        this.target = $(options.target);
-        this.target.html(
-            '<div class="excel-table-content">' +
-            '<div class="excel-table-select-lines">' +
-            '<div class="w"></div><div class="s"></div><div class="a"></div><div class="d"></div>' +
-            '<div class="dot"></div>' +
-            '</div>' +
-            '<div class="excel-table-change-lines">' +
-            '<div class="w"></div><div class="s"></div><div class="a"></div><div class="d"></div>' +
-            '</div>' +
-            '</div>'
-        );
-        this.table = this.target.children('.excel-table-content');
-        this.selectLines.target = this.table.children('.excel-table-select-lines');
-        this.changeLines.target = this.table.children('.excel-table-change-lines');
-        this.rows = options.rows ? options.rows : 0;
-        this.columns = options.columns ? options.columns : 0;
-        if (this.rows && this.columns) {
-            for (var i = 0; i <= this.rows; i++) {
-                for (var j = 0; j <= this.columns; j++) {
-                    this.createUnit(i, j);
-                }
-            }
-            this.dimOne2Two();
-            if (options.data) {
-                options.data.forEach(function (v) {
-                    this.result[v.row][v.column].value = v.value;
-                }.bind(this));
-            }
-        }
-        this.render();
-
-        this.table
-            .on('keydown', 'input', function (e) {
-                var self = $(this);
-                var unit = self.parent(),
-                    row = unit.data('row'),
-                    col = unit.data('col');
-                switch (e.keyCode) {
-                    case 27:
-                        self.val(table.result[row][col].value);
-                    case 13:
-                        var triggerEvent = jQuery.Event('mousedown');
-                        triggerEvent.button = 0;
-                        unit.trigger(triggerEvent).trigger('mouseup');
-                        break;
-                }
-                e.stopPropagation();
-            })
-            .on('change', 'input', function (e) {
-                var unit = $(this).parent(),
-                    row = unit.data('row'),
-                    col = unit.data('col');
-                table.result[row][col].value = $(this).val();
-                table.render();
-                $(table.table.find('.excel-table-unit')[table.selectLines.col + table.selectLines.row * (table.columns + 1)])
-                    .trigger('mousedown').trigger('mouseup');
-                e.stopPropagation();
-            })
-            .on('mousedown dblclick', 'input', function (e) {
-                e.stopPropagation();
-            })
-            .on('mousedown', '.excel-table-unit', function (e) {
-                if (e.button == 0) {
-                    if (!table.changeLines.status) {
-                        if (table.selectLines.status) {
-                            $(this).trigger('mouseup');
-                        } else {
-                            var unit = $(this),
-                                row = unit.data('row'),
-                                col = unit.data('col'),
-                                rows = table.table.find('.excel-table-row'),
-                                cols = table.table.find('.excel-table-col'),
-                                units = table.table.find('.excel-table-unit');
-                            rows.removeClass('active');
-                            cols.removeClass('active');
-                            units.removeClass('active').removeAttr('style');
-                            $(rows[row]).addClass('active');
-                            $(cols[col]).addClass('active');
-                            table.selectLines.status = true;
-                            table.selectLines.row = row;
-                            table.selectLines.col = col;
-                            table.selectLines.render(row, col);
-                            units.find('input').trigger('blur');
-                        }
-                    }
-                } else if (e.button == 2) {
-
-                }
-                return false;
-            })
-            .on('mousedown', '.dot', function (e) {
-                if (e.button == 0) {
-                    table.changeLines.status = 'dot';
-                    table.changeLines.renderDot(table.changeLines.row.end, table.changeLines.col.end);
-                }
-                return false;
-            })
-            .on('mousedown', '.w,.s,.a,.d', function (e) {
-                if (e.button == 0) {
-                    table.changeLines.status = 'move';
-                    table.changeLines.renderMove(table.changeLines.row.start, table.changeLines.col.start);
-                }
-                return false;
-            })
-            .on('mouseover', '.excel-table-unit', function (e) {
-                var unit = $(this),
-                    row = unit.data('row'),
-                    col = unit.data('col');
-                if (table.selectLines.status) {
-                    table.selectLines.render(row, col);
-                }
-                switch (table.changeLines.status) {
-                    case 'dot':
-                        table.changeLines.renderDot(row, col);
-                        break;
-                    case 'move':
-                        table.changeLines.renderMove(row, col);
-                        break;
-                }
-            })
-            .on('mouseup', '.excel-table-unit', function (e) {
-                if (table.selectLines.status) {
-                    var units = table.table.find('.excel-table-unit');
-                    table.selectLines.status = false;
-                    $(units[table.selectLines.col + table.selectLines.row * (table.columns + 1)]).trigger('focus');
-                }
-                if (table.changeLines.status) {
-                    table.changeLines.status = false;
-                }
-                table.changeLines.target.hide();
-            })
-            .on('dblclick', '.excel-table-unit', function (e) {
-                var unit = $(this),
-                    row = unit.data('row'),
-                    col = unit.data('col');
-                var input = $('<input value="' + table.result[row][col].value + '"/>');
-                input.width(unit.width());
-                unit.html(input);
-                unit.children().trigger('select');
-            })
-            .on('blur', 'input', function (e) {
-                var unit = $(this).parent(),
-                    row = unit.data('row'),
-                    col = unit.data('col');
-                unit.html(table.result[row][col].result);
-                e.stopPropagation();
-            })
-            .on('keydown', '.excel-table-unit', function (e) {
-                var unit = $(this),
-                    row = unit.data('row'),
-                    col = unit.data('col'),
-                    units = table.table.find('.excel-table-unit');
-                if (e.keyCode >= 37 && e.keyCode <= 40) {
-                    switch (e.keyCode) {
-                        case 38:
-                            --row < 0 ? row = 0 : '';
-                            break;
-                        case 40:
-                            ++row > table.rows ? row = table.rows : '';
-                            break;
-                        case 37:
-                            --col < 0 ? col = 0 : '';
-                            break;
-                        case 39:
-                            ++col > table.columns ? col = table.columns : '';
-                            break;
-                    }
-                    if (e.shiftKey) {
-                        table.selectLines.render(row, col);
-                        $(units[col + row * (table.columns + 1)]).trigger('focus');
-                    } else {
-                        table.selectLines.col = col;
-                        table.selectLines.row = row;
-                        $(units[table.selectLines.col + table.selectLines.row * (table.columns + 1)]).trigger('mousedown').trigger('mouseup');
-                    }
-                } else if (
-                    (!(e.altKey || e.metaKey || e.ctrlKey)) &&
-                    (
-                        e.keyCode == 8 ||
-                        e.keyCode == 32 ||
-                        (e.keyCode >= 48 && e.keyCode <= 57) ||
-                        (e.keyCode >= 65 && e.keyCode <= 90) ||
-                        (e.keyCode >= 96 && e.keyCode <= 111) ||
-                        (e.keyCode >= 186 && e.keyCode <= 192) ||
-                        (e.keyCode >= 219 && e.keyCode <= 222)
-                    )
-                ) {
-                    unit.trigger('dblclick');
-                    //unit.find('input').trigger('keydown', e);
-                } else {
-                    console.log(e.keyCode);
-                }
-                e.stopPropagation();
-            })
-            .on('scroll', function (e) {
-                $(this).find('.excel-table-col').css('top', this.scrollTop);
-                $(this).find('.excel-table-row').css('left', this.scrollLeft);
-                $(this).find('.excel-table-dig').css({
-                    'top': this.scrollTop,
-                    'left': this.scrollLeft
-                });
-            })
-            .on('click', '.excel-table-col', function (e) {
-                var col = $(this).data('col');
-                table.selectLines.col = col;
-                table.selectLines.row = 0;
-                table.selectLines.render(table.rows, col);
-            })
-            .on('contextmenu', '.excel-table-col', function (e) {
-                $(this).trigger('click');
-                e.preventDefault();
-                //e.stopPropagation();
-            })
-            .on('click', '.excel-table-row', function (e) {
-                var row = $(this).data('row');
-                table.selectLines.col = 0;
-                table.selectLines.row = row;
-                table.selectLines.render(row, table.columns);
-            })
-            .on('contextmenu', '.excel-table-row', function (e) {
-                $(this).trigger('click');
-                e.preventDefault();
-                //e.stopPropagation();
-            })
-            .on('click', '.excel-table-dig', function (e) {
-                table.selectLines.col = 0;
-                table.selectLines.row = 0;
-                table.selectLines.render(table.rows, table.columns);
-            })
-            .on('contextmenu', '.excel-table-unit', function (e) {
-                $(this).trigger('click');
-                e.preventDefault();
-                //e.stopPropagation();
-            })
-    };
+    this.init = ExcelTable.Table.initialize;
+    this.action = new ExcelTable.Table.Action(this);
+    this.history = new ExcelTable.Table.History(this);
 };

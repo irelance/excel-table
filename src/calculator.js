@@ -1,8 +1,11 @@
 /**
- * Created by Administrator on 2017/1/28.
+ * Created by irelance on 2017/1/28.
  */
 
 ExcelTable.calculator = {
+    isExpression: function (value) {
+        return value[0] == '=' && value.length > 1;
+    },
     functions: {
         finds: {
             one: function (row, column) {
@@ -104,7 +107,7 @@ ExcelTable.calculator = {
         }
     },
     regexp: {
-        one:/\$\([0-9]+,1[0-9]+\)/g,
-        row:[/\$\([0-9]+,\[/g]
+        one: /\$\([0-9]+,1[0-9]+\)/g,
+        row: [/\$\([0-9]+,\[/g]
     }
 };

@@ -3,14 +3,25 @@
  */
 
 ExcelTable.template = {
+    table:
+    '<div class="excel-table-content">' +
+    '<div class="excel-table-select-lines">' +
+    '<div class="w"></div><div class="s"></div><div class="a"></div><div class="d"></div>' +
+    '<div class="dot"></div>' +
+    '</div>' +
+    '<div class="excel-table-change-lines">' +
+    '<div class="w"></div><div class="s"></div><div class="a"></div><div class="d"></div>' +
+    '</div>' +
+    '</div>' +
+    '<textarea class="clipboard"></textarea>',
     unit: function (value) {
         return '<tr><input type="text" value="' + value + '"></tr>';
     },
     subTable: {
         setPosition: function (subTable, units, sCol, sRow, columnLength) {
             var position = elementAbsoluteStation(units[sCol + sRow * (columnLength)]);
-            subTable.top = position.top - 2 - 8;
-            subTable.left = position.left - 2 - 8;
+            subTable.top = position.top - 2;
+            subTable.left = position.left - 2;
         },
         setWidth: function (subTable, cols, sCol, eCol) {
             subTable.width = 0;
