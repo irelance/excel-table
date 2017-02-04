@@ -20,7 +20,7 @@ ExcelTable.Table.Action = function (parent) {
         deleteText: function (sRow, sCol, eRow, eCol) {
             for (var j = sRow; j <= eRow; j++) {
                 for (var i = sCol; i <= eCol; i++) {
-                    parent.result[j][i].value = '';
+                    ExcelTable.unit.setValue(parent.result[j][i], '');
                 }
             }
         },
@@ -39,7 +39,7 @@ ExcelTable.Table.Action = function (parent) {
                 cols = v.split("\t");
                 cols.forEach(function (v, j) {
                     if (parent.result[sRow + i] && parent.result[sRow + i][sCol + j]) {
-                        parent.result[sRow + i][sCol + j].value = ExcelTable.calculator.toNumber(v);
+                        ExcelTable.unit.setValue(parent.result[sRow + i][sCol + j], v);
                     }
                 });
             });
@@ -87,7 +87,7 @@ ExcelTable.Table.Action = function (parent) {
                 parent.dimOne2Two();
                 if (mixed.units) {
                     mixed.units.forEach(function (v) {
-                        parent.result[v.row][v.column].value = v.value;
+                        ExcelTable.unit.setValue(parent.result[v.row][v.column], v.value);
                     });
                 }
                 break;
@@ -176,7 +176,7 @@ ExcelTable.Table.Action = function (parent) {
                 last = 0,
                 i, err;
             for (i = sRange.sCol; i <= sRange.eCol; i++) {
-                if (typeof parent.result[row][i].value == 'number') {
+                if (parent.result[row][i].type == 'number') {
                     last = parent.result[row][i].result;
                     if (!number) {
                         first = last;
@@ -188,12 +188,16 @@ ExcelTable.Table.Action = function (parent) {
             err = (last - first) / (number - 1) * number;
             err = err ? err : 0;
             for (i = sRange.eCol + 1; i <= eRange.eCol; i++) {
-                if (ExcelTable.calculator.isExpression(parent.result[row][i - length].value)) {
-                    parent.result[row][i].value = parent.result[row][i - length].value;
-                } else if (typeof parent.result[row][i - length].value == 'number') {
-                    parent.result[row][i].value = parent.result[row][i - length].value + err;
-                } else {
-                    parent.result[row][i].value = parent.result[row][i - length].value;
+                switch (parent.result[row][i - length].type) {
+                    case 'function':
+                        ExcelTable.unit.setValue(parent.result[row][i], parent.result[row][i - length].value);
+                        break;
+                    case 'number':
+                        ExcelTable.unit.setValue(parent.result[row][i], parent.result[row][i - length].value + err);
+                        break;
+                    default:
+                        ExcelTable.unit.setValue(parent.result[row][i], parent.result[row][i - length].value);
+                        break;
                 }
             }
         };
@@ -209,7 +213,7 @@ ExcelTable.Table.Action = function (parent) {
                 last = 0,
                 i, err;
             for (i = sRange.sRow; i <= sRange.eRow; i++) {
-                if (typeof parent.result[i][col].value == 'number') {
+                if (parent.result[i][col].type == 'number') {
                     last = parent.result[i][col].result;
                     if (!number) {
                         first = last;
@@ -221,12 +225,16 @@ ExcelTable.Table.Action = function (parent) {
             err = (last - first) / (number - 1) * number;
             err = err ? err : 0;
             for (i = sRange.eRow + 1; i <= eRange.eRow; i++) {
-                if (ExcelTable.calculator.isExpression(parent.result[i - length][col].value)) {
-                    parent.result[i][col].value = parent.result[i - length][col].value;
-                } else if (typeof parent.result[i - length][col].value == 'number') {
-                    parent.result[i][col].value = parent.result[i - length][col].value + err;
-                } else {
-                    parent.result[i][col].value = parent.result[i - length][col].value;
+                switch (parent.result[row][i - length].type) {
+                    case 'function':
+                        ExcelTable.unit.setValue(parent.result[i][col], parent.result[i - length][col].value);
+                        break;
+                    case 'number':
+                        ExcelTable.unit.setValue(parent.result[i][col], parent.result[i - length][col].value + err);
+                        break;
+                    default:
+                        ExcelTable.unit.setValue(parent.result[i][col], parent.result[i - length][col].value);
+                        break;
                 }
             }
         };
@@ -242,7 +250,7 @@ ExcelTable.Table.Action = function (parent) {
                 last = 0,
                 i, err;
             for (i = sRange.sCol; i <= sRange.eCol; i++) {
-                if (typeof parent.result[row][i].value == 'number') {
+                if (parent.result[row][i].type == 'number') {
                     last = parent.result[row][i].result;
                     if (!number) {
                         first = last;
@@ -254,12 +262,16 @@ ExcelTable.Table.Action = function (parent) {
             err = (last - first) / (number - 1) * number;
             err = err ? err : 0;
             for (i = eRange.sCol; i < sRange.sCol; i++) {
-                if (ExcelTable.calculator.isExpression(parent.result[row][i + length].value)) {
-                    parent.result[row][i].value = parent.result[row][i + length].value;
-                } else if (typeof parent.result[row][i + length].value == 'number') {
-                    parent.result[row][i].value = parent.result[row][i + length].value - err;
-                } else {
-                    parent.result[row][i].value = parent.result[row][i + length].value;
+                switch (parent.result[row][i - length].type) {
+                    case 'function':
+                        ExcelTable.unit.setValue(parent.result[row][i], parent.result[row][i + length].value);
+                        break;
+                    case 'number':
+                        ExcelTable.unit.setValue(parent.result[row][i], parent.result[row][i + length].value - err);
+                        break;
+                    default:
+                        ExcelTable.unit.setValue(parent.result[row][i], parent.result[row][i + length].value);
+                        break;
                 }
             }
         };
@@ -275,7 +287,7 @@ ExcelTable.Table.Action = function (parent) {
                 last = 0,
                 i, err;
             for (i = sRange.sRow; i <= sRange.eRow; i++) {
-                if (typeof parent.result[i][col].value == 'number') {
+                if (parent.result[i][col].type == 'number') {
                     last = parent.result[i][col].result;
                     if (!number) {
                         first = last;
@@ -287,12 +299,16 @@ ExcelTable.Table.Action = function (parent) {
             err = (last - first) / (number - 1) * number;
             err = err ? err : 0;
             for (i = eRange.sRow; i < sRange.sRow; i++) {
-                if (ExcelTable.calculator.isExpression(parent.result[i + length][col].value)) {
-                    parent.result[i][col].value = parent.result[i + length][col].value;
-                } else if (typeof parent.result[i + length][col].value == 'number') {
-                    parent.result[i][col].value = parent.result[i + length][col].value - err;
-                } else {
-                    parent.result[i][col].value = parent.result[i + length][col].value;
+                switch (parent.result[row][i - length].type) {
+                    case 'function':
+                        ExcelTable.unit.setValue(parent.result[i][col], parent.result[i + length][col].value);
+                        break;
+                    case 'number':
+                        ExcelTable.unit.setValue(parent.result[i][col], parent.result[i + length][col].value - err);
+                        break;
+                    default:
+                        ExcelTable.unit.setValue(parent.result[i][col], parent.result[i + length][col].value);
+                        break;
                 }
             }
         };

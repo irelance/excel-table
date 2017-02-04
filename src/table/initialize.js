@@ -32,12 +32,12 @@ ExcelTable.Table.initialize = function (options) {
             var unit = $(this).parent(),
                 row = unit.data('row'),
                 col = unit.data('col');
-            table.result[row][col].value = ExcelTable.calculator.toNumber($(this).val());
+            ExcelTable.unit.setValue(table.result[row][col], $(this).val());
             table.render();
             table.history.change();
             e.stopPropagation();
         })
-        .on('mousedown dblclick', 'input', function (e) {
+        .on('mousedown dblclick click', 'input', function (e) {
             e.stopPropagation();
         })
         .on('mousedown', '.excel-table-unit', function (e) {

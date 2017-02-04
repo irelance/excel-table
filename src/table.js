@@ -211,14 +211,12 @@ ExcelTable.Table = function () {
             row.forEach(function (unit, j) {
                 this.times = 0;
                 try {
-                    unit.result = this.calculate(unit.value);
-                } catch (err) {
-                    console.log(err);
+                    unit.result = this.calculate(unit);
+                } catch (error) {
+                    console.log(error);
                     unit.result = NaN;
                 }
-                result += '<td><div class="excel-table-unit" data-row="' + unit.row +
-                    '" data-col="' + unit.column + '" tabindex="1" contenteditable="true">' + unit.result +
-                    '</div></td>';
+                result += ExcelTable.template.unit(unit);
             }.bind(this));
             result += '</tr>';
         }.bind(this));
@@ -234,7 +232,7 @@ ExcelTable.Table = function () {
         this.selectLines.render();
     };
     this.times = 0;
-    this.calculate = function (value) {
+    this.calculate = function (unit) {
         this.times++;
         if (this.times > this.columns * this.rows * 3) {
             throw 'execute to many times';
@@ -261,15 +259,18 @@ ExcelTable.Table = function () {
         for (var i in ExcelTable.calculator.functions.public) {
             eval('var ' + i.toUpperCase() + '=ExcelTable.calculator.functions.public.' + i);
         }
-        var result = value;
-        if (ExcelTable.calculator.isExpression(value)) {
+        if (unit.type == 'function') {
+            var result;
             try {
-                eval('result' + value);
+                eval('result' + unit.value);
             } catch (error) {
+                console.log(error);
                 result = NaN;
             }
+            return result;
+        } else {
+            return unit.value;
         }
-        return result;
     };
     this.init = ExcelTable.Table.initialize;
     this.action = new ExcelTable.Table.Action(this);

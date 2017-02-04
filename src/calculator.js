@@ -3,20 +3,11 @@
  */
 
 ExcelTable.calculator = {
-    toNumber:function (value) {
-        if (value.match(/^(-?\d+)(\.\d+)?$/)) {
-            value = parseFloat(value);
-        }
-        return value;
-    },
-    isExpression: function (value) {
-        return value[0] == '=' && value.length > 1;
-    },
     functions: {
         finds: {
             one: function (row, column) {
                 if (isNaN(this.result[row][column].result)) {
-                    return this.calculate(this.result[row][column].value);
+                    return this.calculate(this.result[row][column]);
                 }
                 return this.result[row][column].result;
             },
@@ -32,7 +23,7 @@ ExcelTable.calculator = {
                     range[1] = this.columns;
                 }
                 for (var i = range[0]; i <= range[1]; i++) {
-                    result.push(this.calculate(this.result[row][i].value));
+                    result.push(this.calculate(this.result[row][i]));
                 }
                 return result;
             },
@@ -48,7 +39,7 @@ ExcelTable.calculator = {
                     range[1] = this.rows;
                 }
                 for (var j = range[0]; j <= range[1]; j++) {
-                    result.push(this.calculate(this.result[j][column].value));
+                    result.push(this.calculate(this.result[j][column]));
                 }
                 return result;
             },
@@ -78,7 +69,7 @@ ExcelTable.calculator = {
                 }
                 for (j = start[1]; j <= end[1]; j++) {
                     for (i = start[0]; i <= end[0]; i++) {
-                        result.push(this.calculate(this.result[i][j].value));
+                        result.push(this.calculate(this.result[i][j]));
                     }
                 }
                 return result;

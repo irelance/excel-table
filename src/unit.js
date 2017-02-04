@@ -8,12 +8,19 @@ ExcelTable.Unit = function (row, column) {
     this.column = column;
     this.value = '';
     this.result = NaN;
-    this.setData = function (obj) {
-        obj.forEach(function (v) {
-            this[v.key] = v.value;
-        }.bind(this));
-    };
-    this.render = function () {
-        return $(ExcelTable.template.unit(this.result));
-    };
+    this.type = 'string';
+};
+
+ExcelTable.unit = {
+    setValue: function (unit, value) {
+        if (typeof value == 'number' || (value.match && value.match(/^(-?\d+)(\.\d+)?$/))) {
+            value = parseFloat(value);
+            unit.type = 'number';
+        } else if (value[0] == '=' && value.length > 1) {
+            unit.type = 'function';
+        } else {
+            unit.type = 'string';
+        }
+        unit.value = value;
+    }
 };

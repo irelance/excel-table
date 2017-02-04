@@ -3,8 +3,7 @@
  */
 
 ExcelTable.template = {
-    table:
-    '<div class="excel-table-content">' +
+    table: '<div class="excel-table-content">' +
     '<div class="excel-table-select-lines">' +
     '<div class="w"></div><div class="s"></div><div class="a"></div><div class="d"></div>' +
     '<div class="dot"></div>' +
@@ -14,8 +13,10 @@ ExcelTable.template = {
     '</div>' +
     '</div>' +
     '<textarea class="clipboard"></textarea>',
-    unit: function (value) {
-        return '<tr><input type="text" value="' + value + '"></tr>';
+    unit: function (unit) {
+        return '<td><div class="excel-table-unit" data-row="' + unit.row +
+            '" data-col="' + unit.column + '" tabindex="1" contenteditable="true">' + unit.result +
+            '</div></td>';
     },
     subTable: {
         setPosition: function (subTable, units, sCol, sRow, columnLength) {
