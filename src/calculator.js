@@ -3,6 +3,12 @@
  */
 
 ExcelTable.calculator = {
+    toNumber:function (value) {
+        if (value.match(/^(-?\d+)(\.\d+)?$/)) {
+            value = parseFloat(value);
+        }
+        return value;
+    },
     isExpression: function (value) {
         return value[0] == '=' && value.length > 1;
     },

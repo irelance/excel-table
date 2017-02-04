@@ -32,7 +32,7 @@ ExcelTable.Table.initialize = function (options) {
             var unit = $(this).parent(),
                 row = unit.data('row'),
                 col = unit.data('col');
-            table.result[row][col].value = $(this).val();
+            table.result[row][col].value = ExcelTable.calculator.toNumber($(this).val());
             table.render();
             table.history.change();
             e.stopPropagation();
@@ -106,22 +106,24 @@ ExcelTable.Table.initialize = function (options) {
                 case 'dot':
                     switch (table.changeLines.type) {//increase decrease remove
                         case 'increase':
-                        function test(sRange, eRange, direction) {
-                            switch (direction) {
+                            switch (table.changeLines.direction) {
                                 case 'horizontal':
-                                    for (var i = sRange.sRow; i <= eRange.eRow; i++) {
-                                        for (var j = sRange.eCol + 1; j <= eRange.eCol; j++) {
-                                            if(ExcelTable.calculator.isExpression(table.result[i][j].value)){
-                                            }else{
-                                            }
-                                        }
-                                    }
+                                    table.action.increaseHorizontal();
+                                    break;
+                                case 'vertical':
+                                    table.action.increaseVertical();
                                     break;
                             }
-                        }
-
                             break;
                         case 'decrease':
+                            switch (table.changeLines.direction) {
+                                case 'horizontal':
+                                    table.action.decreaseHorizontal();
+                                    break;
+                                case 'vertical':
+                                    table.action.decreaseVertical();
+                                    break;
+                            }
                             break;
                         case 'remove':
                             switch (table.changeLines.direction) {
@@ -195,10 +197,10 @@ ExcelTable.Table.initialize = function (options) {
                     table.selectLines.changeRange(row, col).render();
                     $(units[col + row * (table.columns + 1)]).trigger('focus');
                 } else {
+                    //todo enable the action
                     table.selectLines.col = col;
                     table.selectLines.row = row;
                     $(units[col + row * (table.columns + 1)]).trigger('blur');
-                    //console.log($(units[table.selectLines.col + table.selectLines.row * (table.columns + 1)]))
                     $(units[table.selectLines.col + table.selectLines.row * (table.columns + 1)]).trigger('mousedown').trigger('mouseup');
                 }
             } else if (//typing

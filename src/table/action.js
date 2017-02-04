@@ -3,7 +3,7 @@
  */
 ExcelTable.Table.Action = function (parent) {
     this.private = {
-        getText: function (sRow,sCol,eRow,eCol) {
+        getText: function (sRow, sCol, eRow, eCol) {
             var txt = '';
             for (var j = sRow; j <= eRow; j++) {
                 for (var i = sCol; i <= eCol; i++) {
@@ -17,7 +17,7 @@ ExcelTable.Table.Action = function (parent) {
             }
             return txt;
         },
-        deleteText: function (sRow,sCol,eRow,eCol) {
+        deleteText: function (sRow, sCol, eRow, eCol) {
             for (var j = sRow; j <= eRow; j++) {
                 for (var i = sCol; i <= eCol; i++) {
                     parent.result[j][i].value = '';
@@ -39,7 +39,7 @@ ExcelTable.Table.Action = function (parent) {
                 cols = v.split("\t");
                 cols.forEach(function (v, j) {
                     if (parent.result[sRow + i] && parent.result[sRow + i][sCol + j]) {
-                        parent.result[sRow + i][sCol + j].value = v;
+                        parent.result[sRow + i][sCol + j].value = ExcelTable.calculator.toNumber(v);
                     }
                 });
             });
@@ -167,5 +167,137 @@ ExcelTable.Table.Action = function (parent) {
         }
         this.columns++;
         this.render();
+    };
+    this.increaseHorizontal = function () {
+        var iHorizontal = function (row, sRange, eRange) {
+            var length = 0,
+                number = 0,
+                first = 0,
+                last = 0,
+                i, err;
+            for (i = sRange.sCol; i <= sRange.eCol; i++) {
+                if (typeof parent.result[row][i].value == 'number') {
+                    last = parent.result[row][i].result;
+                    if (!number) {
+                        first = last;
+                    }
+                    number++;
+                }
+                length++;
+            }
+            err = (last - first) / (number - 1) * number;
+            err = err ? err : 0;
+            for (i = sRange.eCol + 1; i <= eRange.eCol; i++) {
+                if (ExcelTable.calculator.isExpression(parent.result[row][i - length].value)) {
+                    parent.result[row][i].value = parent.result[row][i - length].value;
+                } else if (typeof parent.result[row][i - length].value == 'number') {
+                    parent.result[row][i].value = parent.result[row][i - length].value + err;
+                } else {
+                    parent.result[row][i].value = parent.result[row][i - length].value;
+                }
+            }
+        };
+        for (var j = parent.changeLines.eRange.sRow; j <= parent.changeLines.eRange.eRow; j++) {
+            iHorizontal(j, parent.changeLines.sRange, parent.changeLines.eRange);
+        }
+    };
+    this.increaseVertical = function () {
+        var iVertical = function (col, sRange, eRange) {
+            var length = 0,
+                number = 0,
+                first = 0,
+                last = 0,
+                i, err;
+            for (i = sRange.sRow; i <= sRange.eRow; i++) {
+                if (typeof parent.result[i][col].value == 'number') {
+                    last = parent.result[i][col].result;
+                    if (!number) {
+                        first = last;
+                    }
+                    number++;
+                }
+                length++;
+            }
+            err = (last - first) / (number - 1) * number;
+            err = err ? err : 0;
+            for (i = sRange.eRow + 1; i <= eRange.eRow; i++) {
+                if (ExcelTable.calculator.isExpression(parent.result[i - length][col].value)) {
+                    parent.result[i][col].value = parent.result[i - length][col].value;
+                } else if (typeof parent.result[i - length][col].value == 'number') {
+                    parent.result[i][col].value = parent.result[i - length][col].value + err;
+                } else {
+                    parent.result[i][col].value = parent.result[i - length][col].value;
+                }
+            }
+        };
+        for (var j = parent.changeLines.eRange.sCol; j <= parent.changeLines.eRange.eCol; j++) {
+            iVertical(j, parent.changeLines.sRange, parent.changeLines.eRange);
+        }
+    };
+    this.decreaseHorizontal = function () {
+        var dHorizontal = function (row, sRange, eRange) {
+            var length = 0,
+                number = 0,
+                first = 0,
+                last = 0,
+                i, err;
+            for (i = sRange.sCol; i <= sRange.eCol; i++) {
+                if (typeof parent.result[row][i].value == 'number') {
+                    last = parent.result[row][i].result;
+                    if (!number) {
+                        first = last;
+                    }
+                    number++;
+                }
+                length++;
+            }
+            err = (last - first) / (number - 1) * number;
+            err = err ? err : 0;
+            for (i = eRange.sCol; i < sRange.sCol; i++) {
+                if (ExcelTable.calculator.isExpression(parent.result[row][i + length].value)) {
+                    parent.result[row][i].value = parent.result[row][i + length].value;
+                } else if (typeof parent.result[row][i + length].value == 'number') {
+                    parent.result[row][i].value = parent.result[row][i + length].value - err;
+                } else {
+                    parent.result[row][i].value = parent.result[row][i + length].value;
+                }
+            }
+        };
+        for (var j = parent.changeLines.eRange.sRow; j <= parent.changeLines.eRange.eRow; j++) {
+            dHorizontal(j, parent.changeLines.sRange, parent.changeLines.eRange);
+        }
+    };
+    this.decreaseVertical = function () {
+        var dVertical = function (col, sRange, eRange) {
+            var length = 0,
+                number = 0,
+                first = 0,
+                last = 0,
+                i, err;
+            for (i = sRange.sRow; i <= sRange.eRow; i++) {
+                if (typeof parent.result[i][col].value == 'number') {
+                    last = parent.result[i][col].result;
+                    if (!number) {
+                        first = last;
+                    }
+                    number++;
+                }
+                length++;
+            }
+            err = (last - first) / (number - 1) * number;
+            err = err ? err : 0;
+            for (i = eRange.sRow; i < sRange.sRow; i++) {
+                if (ExcelTable.calculator.isExpression(parent.result[i + length][col].value)) {
+                    parent.result[i][col].value = parent.result[i + length][col].value;
+                } else if (typeof parent.result[i + length][col].value == 'number') {
+                    parent.result[i][col].value = parent.result[i + length][col].value - err;
+                } else {
+                    parent.result[i][col].value = parent.result[i + length][col].value;
+                }
+            }
+        };
+        for (var j = parent.changeLines.eRange.sCol; j <= parent.changeLines.eRange.eCol; j++) {
+            dVertical(j, parent.changeLines.sRange, parent.changeLines.eRange);
+        }
     };
 };
