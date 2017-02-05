@@ -5,26 +5,34 @@ ExcelTable.Toolbar = function () {
     this.target = undefined;
     this.active = undefined;
     this.tables = [];
-    this.items = [];
+    this.items = [[]];
     this.init = function (options) {
         this.target = $(options.target);
         options.items.forEach(function (v) {
             if (ExcelTable.toolbar.items[v]) {
-                this.items.push(ExcelTable.toolbar.items[v]);
+                this.items[this.items.length - 1].push(ExcelTable.toolbar.items[v]);
+            } else if (v == '|') {
+                this.items.push([]);
             }
         }.bind(this));
         this.render();
         this.bind();
     };
     this.render = function () {
-        this.items.forEach(function (v) {
-            this.target.append('<a class="' + v.className + '" title="' + v.className + '"></a>');
-        }.bind(this));
+        var html = '';
+        this.items.forEach(function (block) {
+            html += '<div class="toolbar-block">';
+            block.forEach(function (v) {
+                html += '<a class="' + v.className + '" title="' + v.className + '"></a>';
+            });
+            html += '</div>';
+        });
+        this.target.html(html);
     };
     this.bind = function () {
-        this.items.forEach(function (v) {
-            this.target.on('click', '.' + v.className, v.handle.bind(this));
-        }.bind(this));
+        for (var i in ExcelTable.toolbar.items) {
+            this.target.on('click', '.' + i, ExcelTable.toolbar.items[i].handle.bind(this));
+        }
     };
     this.addTable = function (table) {
         this.tables.push(table);
@@ -35,15 +43,9 @@ ExcelTable.Toolbar = function () {
 
 ExcelTable.toolbar = {
     items: {
-        '|': {
-            className: 'split-line',
-            icon:'',
-            handle: function (e) {
-            }
-        },
         'export-raw': {
             className: 'export-raw',
-            icon:'fa fa-file-o',
+            icon: 'fa fa-file-o',
             handle: function (e) {
                 var txt = this.active.action.export();
                 var blob = new Blob([JSON.stringify(txt)]);
@@ -56,7 +58,7 @@ ExcelTable.toolbar = {
         },
         'export-csv': {
             className: 'export-csv',
-            icon:'fa fa-file-excel-o',
+            icon: 'fa fa-file-excel-o',
             handle: function (e) {
                 var txt = this.active.action.private.getText(0, 0, this.active.rows - 1, this.active.columns - 1);
                 txt = txt.replace(/\t/g, '","');
@@ -72,7 +74,7 @@ ExcelTable.toolbar = {
         },
         'import-raw': {
             className: 'import-raw',
-            icon:'fa fa-folder-open-o',
+            icon: 'fa fa-folder-open-o',
             handle: function (e) {
                 var input = $('<input type="file">'),
                     table = this.active;
@@ -88,28 +90,28 @@ ExcelTable.toolbar = {
         },
         'copy': {
             className: 'copy',
-            icon:'fa fa-files-o',
+            icon: 'fa fa-files-o',
             handle: function (e) {
                 this.active.action.copy();
             }
         },
         'paste': {
             className: 'paste',
-            icon:'fa fa-clipboard',
+            icon: 'fa fa-clipboard',
             handle: function (e) {
                 this.active.action.paste();
             }
         },
         'append-column': {
             className: 'append-column',
-            icon:'fa fa-columns',
+            icon: 'fa fa-columns',
             handle: function (e) {
                 this.active.action.insertColumn('append').render();
             }
         },
         'append-row': {
             className: 'append-row',
-            icon:'',
+            icon: '',
             handle: function (e) {
                 this.active.action.insertRow('append').render();
             }

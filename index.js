@@ -27,12 +27,12 @@
             ]
         }
     });
-    var toolbar=new ExcelTable.Toolbar();
+    var toolbar = new ExcelTable.Toolbar();
     toolbar.init({
-        target:'#table .excel-table-toolbar',
-        items:['export-raw','|','export-csv','|','import-raw','|','append-column','|','append-row']
+        target: '#table .excel-table-toolbar',
+        items: ['import-raw', 'export-raw', 'export-csv', '|', 'append-column', 'append-row']
     });
     toolbar.addTable(table);
     t = table;
-    b=toolbar;
+    b = toolbar;
 })();
