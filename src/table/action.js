@@ -110,9 +110,6 @@ ExcelTable.table.Action = function (parent) {
         return data;
     };
     this.move = function (row, col) {
-        //console.log(parent.changeLines);
-        //parent.selectLines.row=row;
-        //parent.selectLines.col=col;
         var txt = this.private.getText(
             parent.selectLines.range.sRow,
             parent.selectLines.range.sCol,
@@ -130,7 +127,31 @@ ExcelTable.table.Action = function (parent) {
     };
     this.sort = function () {
     };
-    this.insertRow = function (num) {
+    this.insertRow = function (active, number) {
+        var i, j;
+        if (active < 0 && active >= -parent.rows) {
+            active += parent.rows;
+        } else if (active >= 0 && active <= parent.rows) {
+        } else if (active == 'append') {
+            active = parent.rows;
+        } else {
+            return false;
+        }
+        if (!number) {
+            number = 1;
+        }
+        for (i = active; i < parent.rows; i++) {
+            for (j = 0; j < parent.rows; j++) {
+                parent.result[j][i].row += number;
+            }
+        }
+        for (i = 0; i < parent.columns; i++) {
+            for (j = active; j < active + number; j++) {
+                parent.createUnit(j, i);
+            }
+        }
+        parent.rows += number;
+        return parent;
     };
     this.insertColumn = function (active, number) {
         var i, j;

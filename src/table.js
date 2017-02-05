@@ -1,10 +1,12 @@
 /**
- * Created by Administrator on 2017/1/25.
+ * Created by irelance on 2017/1/25.
  */
 ExcelTable.table = {};
 ExcelTable.Table = function () {
     this.target = undefined;
     this.table = undefined;
+    this.search = undefined;
+    this.toolbar = undefined;
     this.selectLines = new ExcelTable.table.SelectLines(this);
     this.changeLines = new ExcelTable.table.ChangeLines(this);
     this.rows = 0;
@@ -52,11 +54,12 @@ ExcelTable.Table = function () {
         this.table.find('table').remove();
         this.table.append(result);
         this.selectLines.render();
+        this.history.change();
     };
     this.times = 0;
     this.calculate = function (unit) {
         this.times++;
-        if (this.times > this.columns * this.rows * 3) {
+        if (this.times > 100) {
             throw 'execute to many times';
         }
         var $ = function (row, column) {

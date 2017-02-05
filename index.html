@@ -14,6 +14,9 @@
     <script src="src/table/history.js"></script>
     <script src="src/table/select-lines.js"></script>
     <script src="src/table/change-lines.js"></script>
+    <script src="src/toolbar.js"></script>
+    <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="assets/icon.css" rel="stylesheet">
     <script>
         function getDefaultStyle(elem, attribute) {
             return elem.currentStyle ? elem.currentStyle[attribute] : document.defaultView.getComputedStyle(elem, false)[attribute];
@@ -44,6 +47,7 @@
         }
 
         .excel-table-content th {
+            z-index: 1;
             box-shadow: inset 0 0 1px #000;
             position: relative;
             background: #acf;
@@ -58,7 +62,7 @@
         }
 
         .excel-table-dig {
-            z-index: 1;
+            z-index: 2;
         }
 
         .excel-table-row {
@@ -119,12 +123,19 @@
         .clipboard {
             display: none;
         }
+        .excel-table-unit input{
+            display: inline-block;
+            position: absolute;
+        }
+        .excel-table-search .key{
+            text-align: center;
+            max-width: 80px;
+        }
     </style>
 </head>
 <body>
 <button>test</button>
 <div id="table"></div>
-<pre></pre>
 <script src="index.js"></script>
 </body>
 </html>

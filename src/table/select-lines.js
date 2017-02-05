@@ -21,6 +21,8 @@ ExcelTable.table.SelectLines = function (parent) {
     this.changeActive = function (row, col) {
         this.active.row = row;
         this.active.col = col;
+        parent.search.children('.key').val(row + ',' + col).data('value',row + ',' + col);
+        parent.search.children('.value').val(parent.result[row][col].value);
         return this;
     };
     this.changeRange = function (row, col) {
@@ -69,9 +71,10 @@ ExcelTable.table.SelectLines = function (parent) {
     };
     this.getActive = function () {
         var unit = $(parent.table.find('.excel-table-unit')[this.active.col + this.active.row * parent.columns]);
-        if (!unit.find('input').length) {
+        if (!unit.find('input').length && !parent.table.find('.excel-table-unit:focus').length) {
             unit.trigger('focus');
         }
+        parent.toolbar ? parent.toolbar.active = parent : '';
         return unit;
     };
 };

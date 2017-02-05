@@ -1,9 +1,10 @@
 /**
- * Created by Administrator on 2017/1/25.
+ * Created by irelance on 2017/1/25.
  */
 
 ExcelTable.template = {
-    table: '<div class="excel-table-tools"></div>' +
+    table: '<div class="excel-table-toolbar"></div>' +
+    '<div class="excel-table-search"><input class="key"><span>fx</span><input class="value"></div>' +
     '<div class="excel-table-content">' +
     '<div class="excel-table-select-lines">' +
     '<div class="w"></div><div class="s"></div><div class="a"></div><div class="d"></div>' +
@@ -18,6 +19,21 @@ ExcelTable.template = {
         return '<td><div class="excel-table-unit" data-row="' + unit.row +
             '" data-col="' + unit.column + '" tabindex="1" contenteditable="true">' + unit.result +
             '</div></td>';
+    },
+    input: function (input) {
+        var unit = input.parent(),
+            table = unit.closest('.excel-table-content'),
+            minWidth = unit.width()-4,
+            textWidth = input.val().length * 12,
+            position = elementAbsoluteStation(unit[0]),
+            maxWidth = table.width() - position.left - 22 + table[0].scrollLeft;
+        if (textWidth < minWidth) {
+            textWidth = minWidth;
+        } else if (textWidth > maxWidth) {
+            textWidth = maxWidth;
+        }
+        input.width(textWidth);
+        input.height(unit.height()-6);
     },
     subTable: {
         setPosition: function (subTable, units, sCol, sRow, columnLength) {
