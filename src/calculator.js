@@ -20,7 +20,7 @@ ExcelTable.calculator = {
                     range[0] = 0;
                 }
                 if (range[1] == undefined) {
-                    range[1] = this.columns;
+                    range[1] = this.columns - 1;
                 }
                 for (var i = range[0]; i <= range[1]; i++) {
                     result.push(this.calculate(this.result[row][i]));
@@ -36,7 +36,7 @@ ExcelTable.calculator = {
                     range[0] = 0;
                 }
                 if (range[1] == undefined) {
-                    range[1] = this.rows;
+                    range[1] = this.rows - 1;
                 }
                 for (var j = range[0]; j <= range[1]; j++) {
                     result.push(this.calculate(this.result[j][column]));
@@ -49,13 +49,13 @@ ExcelTable.calculator = {
                     end[0] = 0;
                 }
                 if (end[1] == undefined) {
-                    end[1] = this.columns;
+                    end[1] = this.columns - 1;
                 }
                 if (!start[0]) {
                     start[0] = 0;
                 }
                 if (start[1] == undefined) {
-                    start[1] = this.rows;
+                    start[1] = this.rows - 1;
                 }
                 if (start[0] > end[0]) {
                     temp = end[0];

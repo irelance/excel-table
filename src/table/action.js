@@ -1,7 +1,7 @@
 /**
  * Created by irelance on 2017/2/3.
  */
-ExcelTable.Table.Action = function (parent) {
+ExcelTable.table.Action = function (parent) {
     this.private = {
         getText: function (sRow, sCol, eRow, eCol) {
             var txt = '';
@@ -79,8 +79,8 @@ ExcelTable.Table.Action = function (parent) {
                 parent.rows = mixed.rows ? mixed.rows : 0;
                 parent.columns = mixed.columns ? mixed.columns : 0;
                 parent.units = [];
-                for (var i = 0; i <= parent.rows; i++) {
-                    for (var j = 0; j <= parent.columns; j++) {
+                for (var i = 0; i < parent.rows; i++) {
+                    for (var j = 0; j < parent.columns; j++) {
                         parent.createUnit(i, j);
                     }
                 }
@@ -131,42 +131,32 @@ ExcelTable.Table.Action = function (parent) {
     this.sort = function () {
     };
     this.insertRow = function (num) {
-        var i = 0, j = 0;
-        if (!num || num > this.rows) {
-            num = this.rows + 1;
-        }
-        if (num < 0) {
-            num = 0;
-        }
-        for (i = 0; i < this.columns; i++) {
-            this.createUnit(num, i);
-        }
-        for (i = num; i < this.rows; i++) {
-            for (j = 0; j < this.columns; j++) {
-                this.units[this.result[i][j]].row++;
-            }
-        }
-        this.rows++;
-        this.render();
     };
-    this.insertColumn = function (num) {
-        var i = 0, j = 0;
-        if (!num || num > this.columns) {
-            num = this.columns + 1;
+    this.insertColumn = function (active, number) {
+        var i, j;
+        if (active < 0 && active >= -parent.columns) {
+            active += parent.columns;
+        } else if (active >= 0 && active <= parent.columns) {
+        } else if (active == 'append') {
+            active = parent.columns;
+        } else {
+            return false;
         }
-        if (num < 0) {
-            num = 0;
+        if (!number) {
+            number = 1;
         }
-        for (i = 0; i < this.rows; i++) {
-            this.createUnit(num, i);
-        }
-        for (i = num; i < this.columns; i++) {
-            for (j = 0; j < this.rows; j++) {
-                this.units[this.result[i][j]].columns++;
+        for (i = active; i < parent.columns; i++) {
+            for (j = 0; j < parent.rows; j++) {
+                parent.result[j][i].column += number;
             }
         }
-        this.columns++;
-        this.render();
+        for (i = 0; i < parent.rows; i++) {
+            for (j = active; j < active + number; j++) {
+                parent.createUnit(i, j);
+            }
+        }
+        parent.columns += number;
+        return parent;
     };
     this.increaseHorizontal = function () {
         var iHorizontal = function (row, sRange, eRange) {

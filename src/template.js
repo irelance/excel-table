@@ -3,7 +3,8 @@
  */
 
 ExcelTable.template = {
-    table: '<div class="excel-table-content">' +
+    table: '<div class="excel-table-tools"></div>' +
+    '<div class="excel-table-content">' +
     '<div class="excel-table-select-lines">' +
     '<div class="w"></div><div class="s"></div><div class="a"></div><div class="d"></div>' +
     '<div class="dot"></div>' +

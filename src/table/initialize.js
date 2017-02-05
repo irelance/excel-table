@@ -2,7 +2,7 @@
  * Created by irelance on 2017/2/3.
  */
 
-ExcelTable.Table.initialize = function (options) {
+ExcelTable.table.initialize = function (options) {
     var table = this;
     this.target = $(options.target);
     this.target.html(ExcelTable.template.table);
@@ -184,24 +184,20 @@ ExcelTable.Table.initialize = function (options) {
                         --row < 0 ? row = 0 : '';
                         break;
                     case 40:
-                        ++row > table.rows ? row = table.rows : '';
+                        ++row >= table.rows ? row = table.rows - 1 : '';
                         break;
                     case 37:
                         --col < 0 ? col = 0 : '';
                         break;
                     case 39:
-                        ++col > table.columns ? col = table.columns : '';
+                        ++col >= table.columns ? col = table.columns - 1 : '';
                         break;
                 }
                 if (e.shiftKey) {
                     table.selectLines.changeRange(row, col).render();
-                    $(units[col + row * (table.columns + 1)]).trigger('focus');
+                    $(units[col + row * table.columns]).trigger('focus');
                 } else {
-                    //todo enable the action
-                    table.selectLines.col = col;
-                    table.selectLines.row = row;
-                    $(units[col + row * (table.columns + 1)]).trigger('blur');
-                    $(units[table.selectLines.col + table.selectLines.row * (table.columns + 1)]).trigger('mousedown').trigger('mouseup');
+                    table.selectLines.changeActive(row, col).changeRange(row, col).render();
                 }
             } else if (//typing
             (!(e.altKey || e.metaKey || e.ctrlKey)) &&
@@ -256,7 +252,7 @@ ExcelTable.Table.initialize = function (options) {
         })
         .on('click', '.excel-table-col', function (e) {
             var col = $(this).data('col');
-            table.selectLines.changeActive(0, col).changeRange(table.rows, col).render();
+            table.selectLines.changeActive(0, col).changeRange(table.rows - 1, col).render();
         })
         .on('contextmenu', '.excel-table-col', function (e) {
             $(this).trigger('click');
@@ -265,7 +261,7 @@ ExcelTable.Table.initialize = function (options) {
         })
         .on('click', '.excel-table-row', function (e) {
             var row = $(this).data('row');
-            table.selectLines.changeActive(row, 0).changeRange(row, table.columns).render();
+            table.selectLines.changeActive(row, 0).changeRange(row, table.columns - 1).render();
         })
         .on('contextmenu', '.excel-table-row', function (e) {
             $(this).trigger('click');
@@ -273,7 +269,7 @@ ExcelTable.Table.initialize = function (options) {
             //e.stopPropagation();
         })
         .on('click', '.excel-table-dig', function (e) {
-            table.selectLines.changeActive(0, 0).changeRange(table.rows, table.columns).render();
+            table.selectLines.changeActive(0, 0).changeRange(table.rows - 1, table.columns - 1).render();
         })
         .on('contextmenu', '.excel-table-unit', function (e) {
             $(this).trigger('click');

@@ -1,7 +1,7 @@
 /**
  * Created by irelance on 2017/2/3.
  */
-ExcelTable.Table.History = function (parent) {
+ExcelTable.table.History = function (parent) {
     this.list = [];
     this.active = 0;
     this.undo = function () {

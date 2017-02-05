@@ -12,6 +12,8 @@
     <script src="src/table/action.js"></script>
     <script src="src/table/initialize.js"></script>
     <script src="src/table/history.js"></script>
+    <script src="src/table/select-lines.js"></script>
+    <script src="src/table/change-lines.js"></script>
     <script>
         function getDefaultStyle(elem, attribute) {
             return elem.currentStyle ? elem.currentStyle[attribute] : document.defaultView.getComputedStyle(elem, false)[attribute];
@@ -68,11 +70,14 @@
             overflow: hidden;
             width: 70px;
             height: 18px;
+            color: transparent;
+            text-shadow: 0 0 0 #000;
         }
 
         .excel-table-unit.active {
             background: #acf;
         }
+
         .excel-table-unit.active.select {
             background: #eee;
         }
