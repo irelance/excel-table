@@ -55,11 +55,7 @@ ExcelTable.toolbar = {
             handle: function (e) {
                 var txt = this.active.action.export();
                 var blob = new Blob([JSON.stringify(txt)]);
-                var evt = document.createEvent("HTMLEvents");
-                evt.initEvent("click", false, false);
-                e.target.download = (new Date()).getTime() + '.json';
-                e.target.href = URL.createObjectURL(blob);
-                e.target.dispatchEvent(evt);
+                downloadURI(URL.createObjectURL(blob), (new Date()).getTime() + '.json');
             }
         },
         'export-csv': {
@@ -71,11 +67,7 @@ ExcelTable.toolbar = {
                 txt = txt.replace(/\n/g, '"\n"');
                 txt = '"' + txt + '"';
                 var blob = new Blob([txt]);
-                var evt = document.createEvent("HTMLEvents");
-                evt.initEvent("click", false, false);
-                e.target.download = (new Date()).getTime() + '.csv';
-                e.target.href = URL.createObjectURL(blob);
-                e.target.dispatchEvent(evt);
+                downloadURI(URL.createObjectURL(blob), (new Date()).getTime() + '.csv');
             }
         },
         'import-raw': {
@@ -85,11 +77,19 @@ ExcelTable.toolbar = {
                 var input = $('<input type="file">'),
                     table = this.active;
                 input.on('change', function () {
-                    var reader = new FileReader();
-                    reader.readAsText(this.files[0]);
-                    reader.onload = function () {
-                        table.action.import(JSON.parse(this.result)).render();
-                    };
+                    var reader = new FileReader(),
+                        file = this.files[0];
+                    if (file.type == "application/vnd.ms-excel" && file.name.match(/\.csv$/)) {
+                        reader.readAsText(file);
+                        reader.onload = function () {
+                            table.action.import(table.action.private.csv2json(this.result)).render();
+                        };
+                    } else if (file.name.match(/\.json$/)) {
+                        reader.readAsText(file);
+                        reader.onload = function () {
+                            table.action.import(JSON.parse(this.result)).render();
+                        };
+                    }
                 });
                 input.trigger('click');
             }

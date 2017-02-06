@@ -24,7 +24,7 @@ ExcelTable.table.Action = function (parent) {
                 }
             }
         },
-        pasteText: function (sRow, sCol, txt) {
+        getCRLF: function (txt) {
             var CRLFs = ["\r\n", "\n\r", "\n", "\r"];
             var CRLF = false;
             for (var i in CRLFs) {
@@ -33,6 +33,10 @@ ExcelTable.table.Action = function (parent) {
                     break;
                 }
             }
+            return CRLF;
+        },
+        pasteText: function (sRow, sCol, txt) {
+            var CRLF = this.getCRLF(txt);
             var rows = txt.split(CRLF),
                 cols = [];
             rows.forEach(function (v, i) {
@@ -43,6 +47,28 @@ ExcelTable.table.Action = function (parent) {
                     }
                 });
             });
+        },
+        csv2json: function (txt) {
+            var CRLF = this.getCRLF(txt),
+                rows = txt.split(CRLF),
+                quote1 = /^"/,
+                quote2 = /"$/,
+                data = {
+                    rows: 0,
+                    columns: 0,
+                    units: []
+                };
+            rows.forEach(function (cols, i) {
+                cols = cols.split(',');
+                cols.forEach(function (unit, j) {
+                    unit = unit.replace(quote1, '');
+                    unit = unit.replace(quote2, '');
+                    data.units.push({row: i, column: j, value: unit});
+                    data.columns = j + 1;
+                    data.rows = i + 1;
+                })
+            });
+            return data;
         }
     };
     this.copy = function () {
@@ -102,7 +128,7 @@ ExcelTable.table.Action = function (parent) {
         };
         parent.result.forEach(function (row, i) {
             row.forEach(function (unit, j) {
-                if (unit.value) {
+                if (unit.value == 0 || unit.value) {
                     data.units.push({row: unit.row, column: unit.column, value: unit.value});
                 }
             });

@@ -31,6 +31,15 @@
             station.top += elem.offsetTop;
             return station;
         };
+        function downloadURI(uri,name) {
+            var aLink=document.createElement('a');
+            aLink.download = name;
+            aLink.href = uri;
+            document.body.appendChild(aLink);
+            aLink.click();
+            document.body.removeChild(aLink);
+            delete aLink;
+        }
     </script>
     <style>
         .excel-table-content {
