@@ -12,6 +12,7 @@ ExcelTable.table.initialize = function (options) {
     this.changeLines.target = this.table.children('.excel-table-change-lines');
     this.action.import(options.data).render();
     this.selectLines.changeActive(0, 0);
+    this.resize();
 
     this.search
         .on('change', '.value', function (e) {

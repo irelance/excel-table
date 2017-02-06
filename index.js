@@ -30,7 +30,7 @@
     var toolbar = new ExcelTable.Toolbar();
     toolbar.init({
         target: '#table .excel-table-toolbar',
-        items: ['import-raw', 'export-raw', 'export-csv', '|', 'append-column', 'append-row']
+        items: ['import-raw', 'export-raw', 'export-csv', '|', 'undo', 'redo', '|', 'cut', 'copy', 'paste', '|', 'append-column', 'append-row']
     });
     toolbar.addTable(table);
     t = table;

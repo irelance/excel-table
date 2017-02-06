@@ -20,24 +20,30 @@ ExcelTable.Toolbar = function () {
     };
     this.render = function () {
         var html = '';
-        this.items.forEach(function (block) {
-            html += '<div class="toolbar-block">';
+        this.items.forEach(function (block, i) {
+            html += '<div class="toolbar-block';
+            if (i == 0) {
+                html += ' first';
+            }
+            html += '">';
             block.forEach(function (v) {
-                html += '<a class="' + v.className + '" title="' + v.className + '"></a>';
+                html += '<button class="' + v.className + '" title="' + v.className + '"><i class="' + v.icon + '"></i></button>';
             });
             html += '</div>';
         });
         this.target.html(html);
     };
     this.bind = function () {
+        var toolbar = this;
         for (var i in ExcelTable.toolbar.items) {
-            this.target.on('click', '.' + i, ExcelTable.toolbar.items[i].handle.bind(this));
+            toolbar.target.on('click', '.' + i, ExcelTable.toolbar.items[i].handle.bind(toolbar));
         }
     };
     this.addTable = function (table) {
         this.tables.push(table);
         this.active = table;
         table.toolbar = this;
+        table.resize();
     };
 };
 
@@ -45,7 +51,7 @@ ExcelTable.toolbar = {
     items: {
         'export-raw': {
             className: 'export-raw',
-            icon: 'fa fa-file-o',
+            icon: 'icon iconfont icon-export',
             handle: function (e) {
                 var txt = this.active.action.export();
                 var blob = new Blob([JSON.stringify(txt)]);
@@ -58,7 +64,7 @@ ExcelTable.toolbar = {
         },
         'export-csv': {
             className: 'export-csv',
-            icon: 'fa fa-file-excel-o',
+            icon: 'icon iconfont icon-file-csv',
             handle: function (e) {
                 var txt = this.active.action.private.getText(0, 0, this.active.rows - 1, this.active.columns - 1);
                 txt = txt.replace(/\t/g, '","');
@@ -74,7 +80,7 @@ ExcelTable.toolbar = {
         },
         'import-raw': {
             className: 'import-raw',
-            icon: 'fa fa-folder-open-o',
+            icon: 'icon iconfont icon-import',
             handle: function (e) {
                 var input = $('<input type="file">'),
                     table = this.active;
@@ -88,30 +94,54 @@ ExcelTable.toolbar = {
                 input.trigger('click');
             }
         },
+        'undo': {
+            className: 'undo',
+            icon: 'icon iconfont icon-undo',
+            handle: function (e) {
+                this.active.history.undo();
+            }
+        },
+        'redo': {
+            className: 'redo',
+            icon: 'icon iconfont icon-redo',
+            handle: function (e) {
+                this.active.history.redo();
+            }
+        },
+        'cut': {
+            className: 'cut',
+            icon: 'icon iconfont icon-cut',
+            handle: function (e) {
+                this.active.action.copy().action.delete().render();
+            }
+        },
         'copy': {
             className: 'copy',
-            icon: 'fa fa-files-o',
+            icon: 'icon iconfont icon-copy',
             handle: function (e) {
                 this.active.action.copy();
             }
         },
         'paste': {
             className: 'paste',
-            icon: 'fa fa-clipboard',
+            icon: 'icon iconfont icon-paste',
             handle: function (e) {
-                this.active.action.paste();
+                var table = this.active,
+                    txt = table.target.find('.clipboard').val();
+                table.action.private.pasteText(table.selectLines.active.row, table.selectLines.active.col, txt);
+                table.render();
             }
         },
         'append-column': {
             className: 'append-column',
-            icon: 'fa fa-columns',
+            icon: 'icon iconfont icon-column-append',
             handle: function (e) {
                 this.active.action.insertColumn('append').render();
             }
         },
         'append-row': {
             className: 'append-row',
-            icon: '',
+            icon: 'icon iconfont icon-row-append',
             handle: function (e) {
                 this.active.action.insertRow('append').render();
             }

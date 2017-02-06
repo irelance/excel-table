@@ -15,8 +15,7 @@
     <script src="src/table/select-lines.js"></script>
     <script src="src/table/change-lines.js"></script>
     <script src="src/toolbar.js"></script>
-    <link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link href="assets/icon.css" rel="stylesheet">
+    <link href="assets/iconfont.css" rel="stylesheet">
     <script>
         function getDefaultStyle(elem, attribute) {
             return elem.currentStyle ? elem.currentStyle[attribute] : document.defaultView.getComputedStyle(elem, false)[attribute];
@@ -36,8 +35,6 @@
     <style>
         .excel-table-content {
             position: relative;
-            height: 100px;
-            width: 300px;
             overflow: auto;
         }
 
@@ -61,7 +58,7 @@
             box-shadow: 0 0 1px #000;
         }
 
-        .excel-table-dig {
+        .excel-table-content .excel-table-dig {
             z-index: 2;
         }
 
@@ -123,21 +120,58 @@
         .clipboard {
             display: none;
         }
-        .excel-table-unit input{
+
+        .excel-table-unit input {
             display: inline-block;
             position: absolute;
         }
-        .excel-table-search{
+
+        .excel-table-search {
+            background: #f0f0f0;
             padding: 2px 0;
         }
-        .excel-table-search .key{
+
+        .excel-table-search .key {
             text-align: center;
             max-width: 80px;
+        }
+        .excel-table-search .break {
+            display: inline-block;
+            text-align: right;
+            width: 40px;
+        }
+
+        .excel-table-toolbar {
+            background: #f0f0f0;
+            padding: 4px 0;
+        }
+
+        .excel-table-toolbar .toolbar-block {
+            display: inline-block;
+            border-left: 1px solid #d9d9d9;
+            padding-left: 3px;
+            margin-left: 3px;
+            background: transparent;
+        }
+
+        .excel-table-toolbar .toolbar-block.first {
+            border-left: 0;
+            margin-left: 0;
+        }
+
+        .toolbar-block button {
+            padding: 5px;
+            border: 0;
+            background: transparent;
+        }
+        .toolbar-block button:hover {
+            box-shadow: inset 0 0 1px #aaa;
+            background: #dfdfdf;
         }
     </style>
 </head>
 <body>
-<div id="table"></div>
+<div id="table" style="width: 300px;height: 250px;"></div>
 <script src="index.js"></script>
 </body>
 </html>

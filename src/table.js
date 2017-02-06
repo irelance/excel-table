@@ -54,7 +54,9 @@ ExcelTable.Table = function () {
         this.table.find('table').remove();
         this.table.append(result);
         this.selectLines.render();
-        this.history.change();
+        if (this.history.canRecord) {
+            this.history.change();
+        }
     };
     this.times = 0;
     this.calculate = function (unit) {
@@ -100,4 +102,24 @@ ExcelTable.Table = function () {
     this.init = ExcelTable.table.initialize.bind(this);
     this.action = new ExcelTable.table.Action(this);
     this.history = new ExcelTable.table.History(this);
+    this.resize = function () {
+        var toolbar = this.target.children('.excel-table-toolbar'),
+            width = this.target.width(),
+            searchValue = this.search.find('.value');
+        searchValue.width(width - 132);
+        var height = this.target.height(),
+            tableMinHeight = 55,
+            headerHeight = this.search.height() + 4 + toolbar.height(),
+            remainHeight = height - headerHeight;
+        if (remainHeight < tableMinHeight) {
+            this.target.height(headerHeight + tableMinHeight);
+            this.table.height(tableMinHeight);
+            console.log('test')
+        } else {
+            this.table.height(remainHeight);
+        }
+        this.search.width(width);
+        toolbar.width(width);
+        this.table.width(width);
+    }
 };
