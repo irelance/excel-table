@@ -23,7 +23,7 @@ ExcelTable.template = {
     input: function (input) {
         var unit = input.parent(),
             table = unit.closest('.excel-table-content'),
-            minWidth = unit.width()-4,
+            minWidth = unit.width() - 6,
             textWidth = input.val().length * 12,
             position = elementAbsoluteStation(unit[0]),
             maxWidth = table.width() - position.left - 22 + table[0].scrollLeft;
@@ -33,7 +33,7 @@ ExcelTable.template = {
             textWidth = maxWidth;
         }
         input.width(textWidth);
-        input.height(unit.height()-6);
+        input.height(unit.height() - 6);
     },
     subTable: {
         setPosition: function (subTable, units, sCol, sRow, columnLength) {
