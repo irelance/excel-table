@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script src="src/functions.js"></script>
     <script src="require.js"></script>
     <script src="src/unit.js"></script>
     <script src="src/table.js"></script>
@@ -17,30 +18,6 @@
     <script src="src/toolbar.js"></script>
     <link href="assets/iconfont.css" rel="stylesheet">
     <link href="assets/toolbar.css" rel="stylesheet">
-    <script>
-        function getDefaultStyle(elem, attribute) {
-            return elem.currentStyle ? elem.currentStyle[attribute] : document.defaultView.getComputedStyle(elem, false)[attribute];
-        }
-        elementAbsoluteStation = function (elem, station) {
-            if (!station) {
-                station = {left: 0, top: 0};
-            }
-            if (elem.offsetParent != null && getDefaultStyle(elem.offsetParent, 'position') != 'relative') {
-                station = elementAbsoluteStation(elem.offsetParent, station);
-            }
-            station.left += elem.offsetLeft;
-            station.top += elem.offsetTop;
-            return station;
-        };
-        function downloadURI(uri, name) {
-            var aLink = document.createElement('a');
-            aLink.download = name;
-            aLink.href = uri;
-            document.body.appendChild(aLink);
-            aLink.click();
-            document.body.removeChild(aLink);
-        }
-    </script>
     <style>
         .excel-table-content {
             position: relative;
@@ -84,11 +61,11 @@
             text-shadow: 0 0 0 #000;
         }
 
-        .excel-table-unit.active {
+        .excel-table-unit.select {
             background: #f0f0f0;
         }
 
-        .excel-table-unit.active.select {
+        .excel-table-unit.select.active {
             background: #fff;
         }
 

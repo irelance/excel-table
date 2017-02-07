@@ -12,15 +12,7 @@ ExcelTable.table.SelectLines = function (parent) {
         row: 0,
         col: 0
     };
-    this.range = {
-        sRow: 0,
-        eRow: 0,
-        sCol: 0,
-        eCol: 0
-    };
-    this.isOnRange = function (row, col) {
-        return row >= this.range.sRow && row <= this.range.eRow && col >= this.range.sCol && col <= this.range.eCol;
-    };
+    this.range = new Rectangle();
     this.changeActive = function (row, col) {
         this.active.row = row;
         this.active.col = col;
@@ -54,15 +46,15 @@ ExcelTable.table.SelectLines = function (parent) {
             units = parent.table.find('.excel-table-unit');
         rows.removeClass('active');
         cols.removeClass('active');
-        units.removeClass('active').removeClass('select');//.removeAttr('style');
+        units.removeClass('active').removeClass('select');
         rows.slice(this.range.sRow, this.range.eRow + 1).addClass('active');
         cols.slice(this.range.sCol, this.range.eCol + 1).addClass('active');
         for (var i = this.range.sCol; i <= this.range.eCol; i++) {
             for (var j = this.range.sRow; j <= this.range.eRow; j++) {
-                $(units[i + j * (cols.length)]).addClass('active');
+                $(units[i + j * (cols.length)]).addClass('select');
             }
         }
-        $(units[this.active.col + this.active.row * (cols.length)]).addClass('select').trigger('focus');
+        $(units[this.active.col + this.active.row * (cols.length)]).addClass('active').trigger('focus');
         ExcelTable.template.subTable.setWidth(this, cols, this.range.sCol, this.range.eCol);
         ExcelTable.template.subTable.setHeight(this, rows, this.range.sRow, this.range.eRow);
         ExcelTable.template.subTable.setPosition(this, units, this.range.sCol, this.range.sRow, cols.length);

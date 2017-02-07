@@ -8,18 +8,8 @@ ExcelTable.table.ChangeLines = function (parent) {
     this.width = 0;
     this.height = 0;
     this.status = false;//move dot false
-    this.sRange = {
-        sRow: 0,
-        eRow: 0,
-        sCol: 0,
-        eCol: 0
-    };
-    this.eRange = {
-        sRow: 0,
-        eRow: 0,
-        sCol: 0,
-        eCol: 0
-    };
+    this.sRange = new Rectangle();
+    this.eRange = new Rectangle();
     this.direction = 'horizontal';//horizontal vertical
     this.type = 'increase';//increase decrease remove
     this.move = function (row, col) {

@@ -64,6 +64,12 @@ ExcelTable.Table = function () {
         if (this.times > 100) {
             throw 'execute to many times';
         }
+        var finder = {
+            times: this.times,
+            calculate: this.calculate,
+            result: this.result,
+            origin: unit
+        };
         var $ = function (row, column) {
             var type = typeof row + '-' + typeof column;
             switch (type) {
@@ -78,11 +84,11 @@ ExcelTable.Table = function () {
                 default:
                     return NaN;
             }
-        }.bind(this);
-        var $one = ExcelTable.calculator.functions.finds.one.bind(this);
-        var $row = ExcelTable.calculator.functions.finds.row.bind(this);
-        var $col = ExcelTable.calculator.functions.finds.column.bind(this);
-        var $range = ExcelTable.calculator.functions.finds.range.bind(this);
+        };
+        var $one = ExcelTable.calculator.functions.finds.one.bind(finder);
+        var $row = ExcelTable.calculator.functions.finds.row.bind(finder);
+        var $col = ExcelTable.calculator.functions.finds.column.bind(finder);
+        var $range = ExcelTable.calculator.functions.finds.range.bind(finder);
         for (var i in ExcelTable.calculator.functions.public) {
             eval('var ' + i.toUpperCase() + '=ExcelTable.calculator.functions.public.' + i);
         }

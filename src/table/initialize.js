@@ -73,27 +73,18 @@ ExcelTable.table.initialize = function (options) {
             var unit = $(this),
                 row = unit.data('row'),
                 col = unit.data('col'),
-                isOnRange = unit.hasClass('active');
-            if (e.button == 0 && e.altKey && isOnRange) {
+                isSelected = unit.hasClass('select');
+            if (e.button == 0 && e.altKey && isSelected) {
                 table.selectLines.changeActive(row, col).render();
                 return false;
             }
-            if (e.button == 0 || (e.button == 2 && !isOnRange)) {
+            if (e.button == 0 || (e.button == 2 && !isSelected)) {
                 if (!table.changeLines.status) {
                     if (table.selectLines.status) {
                         $(this).trigger('mouseup');
                     } else {
-                        var rows = table.table.find('.excel-table-row'),
-                            cols = table.table.find('.excel-table-col'),
-                            units = table.table.find('.excel-table-unit');
-                        rows.removeClass('active');
-                        cols.removeClass('active');
-                        units.removeClass('active').removeAttr('style');
-                        $(rows[row]).addClass('active');
-                        $(cols[col]).addClass('active');
                         table.selectLines.status = true;
                         table.selectLines.changeActive(row, col).changeRange(row, col).render();
-                        units.find('input').trigger('blur');
                     }
                 }
             }
@@ -247,9 +238,9 @@ ExcelTable.table.initialize = function (options) {
             ) {
                 unit.trigger('dblclick');
             } else if (e.keyCode == 9) {//tab
-                if (table.selectLines.isOnRange(row, col + 1)) {
+                if (table.selectLines.range.isIn(row, col + 1)) {
                     col += 1;
-                } else if (table.selectLines.isOnRange(row + 1, table.selectLines.range.sCol)) {
+                } else if (table.selectLines.range.isIn(row + 1, table.selectLines.range.sCol)) {
                     row += 1;
                     col = table.selectLines.range.sCol;
                 } else {

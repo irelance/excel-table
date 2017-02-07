@@ -6,6 +6,9 @@ ExcelTable.calculator = {
     functions: {
         finds: {
             one: function (row, column) {
+                if (this.origin.row == row && this.origin.column == column) {
+                    return NaN;
+                }
                 if (isNaN(this.result[row][column].result)) {
                     return this.calculate(this.result[row][column]);
                 }
@@ -22,6 +25,9 @@ ExcelTable.calculator = {
                 if (range[1] == undefined) {
                     range[1] = this.columns - 1;
                 }
+                if (this.origin.row == row && this.origin.column >= range[0] && this.origin.column <= range[1]) {
+                    return NaN;
+                }
                 for (var i = range[0]; i <= range[1]; i++) {
                     result.push(this.calculate(this.result[row][i]));
                 }
@@ -37,6 +43,9 @@ ExcelTable.calculator = {
                 }
                 if (range[1] == undefined) {
                     range[1] = this.rows - 1;
+                }
+                if (this.origin.column == column && this.origin.row >= range[0] && this.origin.row <= range[1]) {
+                    return NaN;
                 }
                 for (var j = range[0]; j <= range[1]; j++) {
                     result.push(this.calculate(this.result[j][column]));
@@ -67,6 +76,12 @@ ExcelTable.calculator = {
                     end[1] = start[1];
                     start[1] = temp;
                 }
+                if (this.origin.column >= start[1] &&
+                    this.origin.column <= end[1] &&
+                    this.origin.row >= start[0] &&
+                    this.origin.row <= end[0]) {
+                    return NaN;
+                }
                 for (j = start[1]; j <= end[1]; j++) {
                     for (i = start[0]; i <= end[0]; i++) {
                         result.push(this.calculate(this.result[i][j]));
@@ -94,17 +109,10 @@ ExcelTable.calculator = {
                 var result = 0;
                 arr.forEach(function (v) {
                     v = parseFloat(v);
-                    if (isNaN(v)) {
-                        v = 0;
-                    }
                     result += v;
                 });
                 return result;
             }
         }
-    },
-    regexp: {
-        one: /\$\([0-9]+,1[0-9]+\)/g,
-        row: [/\$\([0-9]+,\[/g]
     }
 };
