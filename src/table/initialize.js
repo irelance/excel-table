@@ -16,14 +16,14 @@ ExcelTable.table.initialize = function (options) {
 
     this.search
         .on('change', '.value', function (e) {
-            ExcelTable.unit.setValue(table.result[table.selectLines.active.row][table.selectLines.active.col], $(this).val());
+            ExcelTable.unit.setValue(table.selectLines.getActiveModel(), $(this).val());
             table.render();
         })
         .on('keydown', '.value', function (e) {
             var self = $(this);
             switch (e.keyCode) {
                 case 27:
-                    self.val(table.result[table.selectLines.active.row][table.selectLines.active.col].value);
+                    self.val(table.selectLines.getActiveModel().value);
                     break;
             }
         })
@@ -153,20 +153,20 @@ ExcelTable.table.initialize = function (options) {
                         case 'remove':
                             switch (table.changeLines.direction) {
                                 case 'horizontal':
-                                    table.action.private.deleteText(
-                                        table.changeLines.eRange.sRow,
-                                        table.changeLines.eRange.eCol + 1,
-                                        table.changeLines.sRange.eRow,
-                                        table.changeLines.sRange.eCol
-                                    );
+                                    table.action.private.deleteText({
+                                        sRow: table.changeLines.eRange.sRow,
+                                        sCol: table.changeLines.eRange.eCol + 1,
+                                        eRow: table.changeLines.sRange.eRow,
+                                        eCol: table.changeLines.sRange.eCol
+                                    });
                                     break;
                                 case 'vertical':
-                                    table.action.private.deleteText(
-                                        table.changeLines.eRange.eRow + 1,
-                                        table.changeLines.eRange.sCol,
-                                        table.changeLines.sRange.eRow,
-                                        table.changeLines.sRange.eCol
-                                    );
+                                    table.action.private.deleteText({
+                                        sRow: table.changeLines.eRange.eRow + 1,
+                                        sCol: table.changeLines.eRange.sCol,
+                                        eRow: table.changeLines.sRange.eRow,
+                                        eCol: table.changeLines.sRange.eCol
+                                    });
                                     break;
                             }
                             break;
@@ -175,7 +175,7 @@ ExcelTable.table.initialize = function (options) {
                     table.changeLines.status = false;
                     break;
                 case 'move':
-                    table.action.move(row, col).changeLines.afterAction().render();
+                    table.action.move(table.changeLines.eRange.sRow, table.changeLines.eRange.sCol).changeLines.afterAction().render();
                     table.changeLines.status = false;
                     break;
             }
@@ -209,18 +209,18 @@ ExcelTable.table.initialize = function (options) {
                         --row < 0 ? row = 0 : '';
                         break;
                     case 40:
-                        ++row >= table.rows ? row = table.rows - 1 : '';
+                        ++row > table.range.eRow ? row = table.range.eRow : '';
                         break;
                     case 37:
                         --col < 0 ? col = 0 : '';
                         break;
                     case 39:
-                        ++col >= table.columns ? col = table.columns - 1 : '';
+                        ++col > table.range.eCol ? col = table.range.eCol : '';
                         break;
                 }
                 if (e.shiftKey) {
                     table.selectLines.changeRange(row, col).render();
-                    $(units[col + row * table.columns]).trigger('focus');
+                    $(units[col + row * table.range.columns]).trigger('focus');
                 } else {
                     table.selectLines.changeActive(row, col).changeRange(row, col).render();
                 }
@@ -238,9 +238,9 @@ ExcelTable.table.initialize = function (options) {
             ) {
                 unit.trigger('dblclick');
             } else if (e.keyCode == 9) {//tab
-                if (table.selectLines.range.isIn(row, col + 1)) {
+                if (table.selectLines.range.isContains((new Rectangle()).setRange(row, col + 1))) {
                     col += 1;
-                } else if (table.selectLines.range.isIn(row + 1, table.selectLines.range.sCol)) {
+                } else if (table.selectLines.range.isContains((new Rectangle()).setRange(row + 1, table.selectLines.range.sCol))) {
                     row += 1;
                     col = table.selectLines.range.sCol;
                 } else {
@@ -280,7 +280,7 @@ ExcelTable.table.initialize = function (options) {
                 'top': this.scrollTop,
                 'left': this.scrollLeft
             });
-            var unit = table.selectLines.getActive();
+            var unit = table.selectLines.getActiveView();
             var input = unit.find('input');
             if (input.length) {
                 ExcelTable.template.input(input);
@@ -288,7 +288,7 @@ ExcelTable.table.initialize = function (options) {
         })
         .on('click', '.excel-table-col', function (e) {
             var col = $(this).data('col');
-            table.selectLines.changeActive(0, col).changeRange(table.rows - 1, col).render();
+            table.selectLines.changeActive(0, col).changeRange(table.range.eRow, col).render();
         })
         .on('contextmenu', '.excel-table-col', function (e) {
             $(this).trigger('click');
@@ -297,7 +297,7 @@ ExcelTable.table.initialize = function (options) {
         })
         .on('click', '.excel-table-row', function (e) {
             var row = $(this).data('row');
-            table.selectLines.changeActive(row, 0).changeRange(row, table.columns - 1).render();
+            table.selectLines.changeActive(row, 0).changeRange(row, table.range.eCol).render();
         })
         .on('contextmenu', '.excel-table-row', function (e) {
             $(this).trigger('click');
@@ -305,7 +305,7 @@ ExcelTable.table.initialize = function (options) {
             //e.stopPropagation();
         })
         .on('click', '.excel-table-dig', function (e) {
-            table.selectLines.changeActive(0, 0).changeRange(table.rows - 1, table.columns - 1).render();
+            table.selectLines.changeActive(0, 0).changeRange(table.range.eRow, table.range.eCol).render();
         })
         .on('contextmenu', '.excel-table-unit', function (e) {
             $(this).trigger('click');
@@ -319,6 +319,6 @@ ExcelTable.table.initialize = function (options) {
             e.stopPropagation();
         })
         .on('click', function () {
-            table.selectLines.getActive();
+            table.selectLines.getActiveView();
         })
 };

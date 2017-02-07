@@ -25,13 +25,43 @@ downloadURI = function (uri, name) {
     document.body.removeChild(aLink);
 };
 
-Rectangle = function (sRow, sCol, eRow, eCol) {
+Rectangle = function () {
     this.type = 'rectangle';
-    this.sRow = sRow ? sRow : 0;
-    this.sCol = sCol ? sCol : 0;
-    this.eRow = eRow ? eRow : sRow ? sRow : 0;
-    this.eCol = eCol ? eCol : sCol ? sCol : 0;
-    this.isIn = function (row, col) {
-        return row >= this.sRow && row <= this.eRow && col >= this.sCol && col <= this.eCol;
-    }
+    this.sRow = 0;
+    this.sCol = 0;
+    this.eRow = 0;
+    this.eCol = 0;
+    this.rows = 1;
+    this.columns = 1;
+    this.isContains = function (rectangle) {
+        return rectangle.sRow >= this.sRow && rectangle.eRow <= this.eRow &&
+            rectangle.sCol >= this.sCol && rectangle.eCol <= this.eCol;
+    };
+    this.setRange = function (sRow, sCol, eRow, eCol) {
+        this.sRow = sRow ? sRow : 0;
+        this.sCol = sCol ? sCol : 0;
+        this.eRow = eRow ? eRow : sRow ? sRow : 0;
+        this.eCol = eCol ? eCol : sCol ? sCol : 0;
+        this.rows = this.eRow - this.sRow + 1;
+        this.columns = this.eCol - this.sCol + 1;
+        return this;
+    };
+    this.setRangeByDiagonal = function (point1, point2) {
+        if (point1[0] > point2[0]) {
+            [point1[0], point2[0]] = [point2[0], point1[0]];
+        }
+        if (point1[1] > point2[1]) {
+            [point1[1], point2[1]] = [point2[1], point1[1]];
+        }
+        this.setRange(point1[0], point1[1], point2[0], point2[1]);
+        return this;
+    };
+    this.setRangeByDistance = function (point, columns, rows) {
+        this.setRangeByDiagonal(point, [point[0] + rows - 1, point[1] + columns - 1]);
+        return this;
+    };
+    this.setRangeByRange = function (rowRange, columnRange) {
+        this.setRangeByDiagonal([rowRange[0], columnRange[0]], [rowRange[1], columnRange[1]]);
+        return this;
+    };
 };

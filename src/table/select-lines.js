@@ -8,34 +8,17 @@ ExcelTable.table.SelectLines = function (parent) {
     this.width = 0;
     this.height = 0;
     this.status = false;
-    this.active = {
-        row: 0,
-        col: 0
-    };
+    this.active = new Rectangle();
     this.range = new Rectangle();
     this.changeActive = function (row, col) {
-        this.active.row = row;
-        this.active.col = col;
+        this.active.setRange(row, col);
         parent.search.children('.key').val(row + ',' + col).data('value', row + ',' + col);
         parent.search.children('.value').val(parent.result[row][col].value);
         return this;
     };
     this.changeRange = function (row, col) {
         var change = parent.changeLines;
-        this.range.sCol = this.active.col;
-        this.range.eCol = this.active.col;
-        this.range.sRow = this.active.row;
-        this.range.eRow = this.active.row;
-        if (this.active.col > col) {
-            this.range.sCol = col;
-        } else {
-            this.range.eCol = col;
-        }
-        if (this.active.row > row) {
-            this.range.sRow = row;
-        } else {
-            this.range.eRow = row;
-        }
+        this.range.setRangeByDiagonal([this.active.sRow, this.active.sCol], [row, col]);
         change.sRange = $.extend(true, change.sRange, this.range);
         change.eRange = $.extend(true, change.eRange, this.range);
         return this;
@@ -54,7 +37,7 @@ ExcelTable.table.SelectLines = function (parent) {
                 $(units[i + j * (cols.length)]).addClass('select');
             }
         }
-        $(units[this.active.col + this.active.row * (cols.length)]).addClass('active').trigger('focus');
+        this.getActiveView().addClass('active').trigger('focus');
         ExcelTable.template.subTable.setWidth(this, cols, this.range.sCol, this.range.eCol);
         ExcelTable.template.subTable.setHeight(this, rows, this.range.sRow, this.range.eRow);
         ExcelTable.template.subTable.setPosition(this, units, this.range.sCol, this.range.sRow, cols.length);
@@ -64,12 +47,15 @@ ExcelTable.table.SelectLines = function (parent) {
         });
         ExcelTable.template.subTable.outLine(this);
     };
-    this.getActive = function () {
-        var unit = $(parent.table.find('.excel-table-unit')[this.active.col + this.active.row * parent.columns]);
+    this.getActiveView = function () {
+        var unit = $(parent.table.find('.excel-table-unit')[this.active.sCol + this.active.sRow * parent.range.columns]);
         if (!unit.find('input').length && !parent.table.find('.excel-table-unit:focus').length) {
             unit.trigger('focus');
         }
         parent.toolbar ? parent.toolbar.active = parent : '';
         return unit;
     };
+    this.getActiveModel=function () {
+        return parent.result[this.active.sRow][this.active.sCol];
+    }
 };

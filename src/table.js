@@ -9,8 +9,7 @@ ExcelTable.Table = function () {
     this.toolbar = undefined;
     this.selectLines = new ExcelTable.table.SelectLines(this);
     this.changeLines = new ExcelTable.table.ChangeLines(this);
-    this.rows = 0;
-    this.columns = 0;
+    this.range = new Rectangle();
     this.units = [];
     this.result = [];
     this.dimOne2Two = function () {
@@ -46,7 +45,7 @@ ExcelTable.Table = function () {
         }.bind(this));
         result += '</tbody>';
         var header = '<thead><tr><th class="excel-table-dig"></th>';
-        for (var i = 0; i < this.columns; i++) {
+        for (var i = 0; i < this.range.columns; i++) {
             header += '<th class="excel-table-col" data-col="' + i + '">' + i + '</th>';
         }
         header += '</tr></thead>';
@@ -68,6 +67,7 @@ ExcelTable.Table = function () {
             times: this.times,
             calculate: this.calculate,
             result: this.result,
+            range: this.range,
             origin: unit
         };
         var $ = function (row, column) {

@@ -23,7 +23,7 @@ ExcelTable.calculator = {
                     range[0] = 0;
                 }
                 if (range[1] == undefined) {
-                    range[1] = this.columns - 1;
+                    range[1] = this.range.eCol;
                 }
                 if (this.origin.row == row && this.origin.column >= range[0] && this.origin.column <= range[1]) {
                     return NaN;
@@ -42,7 +42,7 @@ ExcelTable.calculator = {
                     range[0] = 0;
                 }
                 if (range[1] == undefined) {
-                    range[1] = this.rows - 1;
+                    range[1] = this.range.eRow;
                 }
                 if (this.origin.column == column && this.origin.row >= range[0] && this.origin.row <= range[1]) {
                     return NaN;
@@ -53,28 +53,24 @@ ExcelTable.calculator = {
                 return result;
             },
             range: function (start, end) {
-                var result = [], temp = 0, i, j;
-                if (!end[0]) {
-                    end[0] = 0;
-                }
-                if (end[1] == undefined) {
-                    end[1] = this.columns - 1;
-                }
+                var result = [], i, j;
                 if (!start[0]) {
                     start[0] = 0;
                 }
-                if (start[1] == undefined) {
-                    start[1] = this.rows - 1;
+                if (!start[1]) {
+                    start[1] = 0;
+                }
+                if (end[0] == undefined) {
+                    end[0] = this.range.eRow;
+                }
+                if (end[1] == undefined) {
+                    end[1] = this.range.eCol;
                 }
                 if (start[0] > end[0]) {
-                    temp = end[0];
-                    end[0] = start[0];
-                    start[0] = temp;
+                    [start[0], end[0]] = [end[0], start[0]];
                 }
                 if (start[1] > end[1]) {
-                    temp = end[1];
-                    end[1] = start[1];
-                    start[1] = temp;
+                    [start[1], end[1]] = [end[1], start[1]];
                 }
                 if (this.origin.column >= start[1] &&
                     this.origin.column <= end[1] &&

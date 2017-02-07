@@ -16,23 +16,27 @@
     padding: 0;
     margin: 0;
 }
+
 .toolbar-block li {
     display: inline-block;
 }
+
 .toolbar-block button {
     padding: 5px;
     border: 0;
     background: transparent;
 }
-.toolbar-block li .icon-down{
+
+.toolbar-block li .icon-down {
     font-size: 1px;
 }
 
-.toolbar-block li:hover>button {
+.toolbar-block li:hover > button {
     box-shadow: inset 0 0 1px #aaa;
     background: #dfdfdf;
 }
-.toolbar-block li:hover ul{
+
+.toolbar-block li:hover ul {
     display: block;
 }
 
@@ -40,9 +44,19 @@
     z-index: 10;
     background: #f0f0f0;
     position: absolute;
-    box-shadow:inset 0 0 1px #aaa;
+    box-shadow: inset 0 0 1px #aaa;
     display: none;
 }
+
 .toolbar-block ul.children li {
     display: block;
+}
+
+.toolbar-block ul.children button {
+    text-align: left;
+    width: 100%;
+}
+
+.toolbar-block ul.children i {
+    padding-right: 5px;
 }

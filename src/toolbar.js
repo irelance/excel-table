@@ -74,7 +74,7 @@ ExcelTable.toolbar = {
             className: 'export-csv',
             icon: 'icon iconfont icon-file-csv',
             handle: function (e) {
-                var txt = this.active.action.private.getText(0, 0, this.active.rows - 1, this.active.columns - 1);
+                var txt = this.active.action.private.getText(this.active.range);
                 txt = txt.replace(/\t/g, '","');
                 txt = txt.replace(/\n/g, '"\n"');
                 txt = '"' + txt + '"';
