@@ -8,7 +8,7 @@
         target: '#table',
         data: {
             rows: 5,
-            columns: 5,
+            columns: 4,
             units: [
                 {row: 0, column: 0, value: 6},
                 {row: 0, column: 1, value: 4},
@@ -30,7 +30,11 @@
     var toolbar = new ExcelTable.Toolbar();
     toolbar.init({
         target: '#table .excel-table-toolbar',
-        items: ['import-raw', 'export-raw', 'export-csv', '|', 'undo', 'redo', '|', 'cut', 'copy', 'paste', '|', 'append-column', 'append-row']
+        items: ['import', 'export', '|',
+            'undo', 'redo', '|',
+            'cut', 'copy', 'paste', '|',
+            'append-column', 'append-row', '|',
+            'sort-asc', 'sort-desc']
     });
     toolbar.addTable(table);
     t = table;

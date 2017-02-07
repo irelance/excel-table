@@ -16,6 +16,7 @@
     <script src="src/table/change-lines.js"></script>
     <script src="src/toolbar.js"></script>
     <link href="assets/iconfont.css" rel="stylesheet">
+    <link href="assets/toolbar.css" rel="stylesheet">
     <script>
         function getDefaultStyle(elem, attribute) {
             return elem.currentStyle ? elem.currentStyle[attribute] : document.defaultView.getComputedStyle(elem, false)[attribute];
@@ -31,14 +32,13 @@
             station.top += elem.offsetTop;
             return station;
         };
-        function downloadURI(uri,name) {
-            var aLink=document.createElement('a');
+        function downloadURI(uri, name) {
+            var aLink = document.createElement('a');
             aLink.download = name;
             aLink.href = uri;
             document.body.appendChild(aLink);
             aLink.click();
             document.body.removeChild(aLink);
-            delete aLink;
         }
     </script>
     <style>
@@ -144,38 +144,11 @@
             text-align: center;
             max-width: 80px;
         }
+
         .excel-table-search .break {
             display: inline-block;
             text-align: right;
             width: 40px;
-        }
-
-        .excel-table-toolbar {
-            background: #f0f0f0;
-            padding: 4px 0;
-        }
-
-        .excel-table-toolbar .toolbar-block {
-            display: inline-block;
-            border-left: 1px solid #d9d9d9;
-            padding-left: 3px;
-            margin-left: 3px;
-            background: transparent;
-        }
-
-        .excel-table-toolbar .toolbar-block.first {
-            border-left: 0;
-            margin-left: 0;
-        }
-
-        .toolbar-block button {
-            padding: 5px;
-            border: 0;
-            background: transparent;
-        }
-        .toolbar-block button:hover {
-            box-shadow: inset 0 0 1px #aaa;
-            background: #dfdfdf;
         }
     </style>
 </head>

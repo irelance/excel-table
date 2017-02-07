@@ -18,10 +18,13 @@ ExcelTable.table.SelectLines = function (parent) {
         sCol: 0,
         eCol: 0
     };
+    this.isOnRange = function (row, col) {
+        return row >= this.range.sRow && row <= this.range.eRow && col >= this.range.sCol && col <= this.range.eCol;
+    };
     this.changeActive = function (row, col) {
         this.active.row = row;
         this.active.col = col;
-        parent.search.children('.key').val(row + ',' + col).data('value',row + ',' + col);
+        parent.search.children('.key').val(row + ',' + col).data('value', row + ',' + col);
         parent.search.children('.value').val(parent.result[row][col].value);
         return this;
     };

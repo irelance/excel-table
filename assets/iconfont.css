@@ -1,10 +1,10 @@
 
 @font-face {font-family: "iconfont";
-  src: url('iconfont.eot?t=1486366725283'); /* IE9*/
-  src: url('iconfont.eot?t=1486366725283#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('iconfont.woff?t=1486366725283') format('woff'), /* chrome, firefox */
-  url('iconfont.ttf?t=1486366725283') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
-  url('iconfont.svg?t=1486366725283#iconfont') format('svg'); /* iOS 4.1- */
+  src: url('iconfont.eot?t=1486440025833'); /* IE9*/
+  src: url('iconfont.eot?t=1486440025833#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('iconfont.woff?t=1486440025833') format('woff'), /* chrome, firefox */
+  url('iconfont.ttf?t=1486440025833') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('iconfont.svg?t=1486440025833#iconfont') format('svg'); /* iOS 4.1- */
 }
 
 .iconfont {
@@ -72,4 +72,8 @@
 .icon-column-append:before { content: "\e628"; }
 
 .icon-row-append:before { content: "\e629"; }
+
+.icon-file-json:before { content: "\e62b"; }
+
+.icon-down:before { content: "\e62d"; }
 

@@ -51,8 +51,7 @@ ExcelTable.table.Action = function (parent) {
         csv2json: function (txt) {
             var CRLF = this.getCRLF(txt),
                 rows = txt.split(CRLF),
-                quote1 = /^"/,
-                quote2 = /"$/,
+                match = /^"(.*)"$/,
                 data = {
                     rows: 0,
                     columns: 0,
@@ -61,8 +60,7 @@ ExcelTable.table.Action = function (parent) {
             rows.forEach(function (cols, i) {
                 cols = cols.split(',');
                 cols.forEach(function (unit, j) {
-                    unit = unit.replace(quote1, '');
-                    unit = unit.replace(quote2, '');
+                    unit = unit.replace(match, '$1');
                     data.units.push({row: i, column: j, value: unit});
                     data.columns = j + 1;
                     data.rows = i + 1;
@@ -151,7 +149,41 @@ ExcelTable.table.Action = function (parent) {
         this.private.pasteText(row, col, txt);
         return parent;
     };
-    this.sort = function () {
+    this.sort = function (type) {
+        switch (type) {
+            case 'asc':
+                type = 1;
+                break;
+            case 'desc':
+                type = -1;
+                break;
+            default:
+                return false;
+        }
+        var sCol = parent.selectLines.range.sCol,
+            eCol = parent.selectLines.range.eCol;
+        if (parent.selectLines.range.sCol == parent.selectLines.active.col && parent.selectLines.range.eCol == parent.selectLines.active.col) {
+            sCol = 0;
+            eCol = parent.columns - 1;
+        }
+        var list = [];
+        for (var i = parent.selectLines.range.sRow; i <= parent.selectLines.range.eRow; i++) {
+            list.push(parent.result[i][parent.selectLines.active.col]);
+        }
+        list.sort(function (a, b) {
+            if (typeof a.result != 'number' && typeof b.result == 'number') {
+                return type;
+            }
+            return a.result == b.result ? 0 : a.result > b.result ? type : -type;
+        });
+        list.forEach(function (v, i) {
+            parent.result[v.row].forEach(function (unit) {
+                if (unit.column >= sCol && unit.column <= eCol) {
+                    unit.row = i;
+                }
+            });
+        });
+        return parent;
     };
     this.insertRow = function (active, number) {
         var i, j;

@@ -21,22 +21,29 @@ ExcelTable.Toolbar = function () {
     this.render = function () {
         var html = '';
         this.items.forEach(function (block, i) {
-            html += '<div class="toolbar-block';
-            if (i == 0) {
-                html += ' first';
-            }
-            html += '">';
+            html += '<div class="toolbar-block"><ul>';
             block.forEach(function (v) {
-                html += '<button class="' + v.className + '" title="' + v.className + '"><i class="' + v.icon + '"></i></button>';
+                if (v.children) {
+                    html += '<li><button class="' + v.className + '" title="' + v.className + '"><i class="' + v.icon + '"></i><i class="icon iconfont icon-down"></i></button><ul class="children">';
+                    v.children.forEach(function (vv) {
+                        html += '<li><button class="' + ExcelTable.toolbar.items[vv].className +
+                            '"><i class="' + ExcelTable.toolbar.items[vv].icon + '"></i>' + ExcelTable.toolbar.items[vv].className + '</button></li>';
+                    });
+                    html += '</ul></li>';
+                } else {
+                    html += '<li><button class="' + v.className + '" title="' + v.className + '"><i class="' + v.icon + '"></i></button></li>';
+                }
             });
-            html += '</div>';
+            html += '</ul></div>';
         });
         this.target.html(html);
     };
     this.bind = function () {
         var toolbar = this;
         for (var i in ExcelTable.toolbar.items) {
-            toolbar.target.on('click', '.' + i, ExcelTable.toolbar.items[i].handle.bind(toolbar));
+            if (ExcelTable.toolbar.items[i].handle) {
+                toolbar.target.on('click', '.' + i, ExcelTable.toolbar.items[i].handle.bind(toolbar));
+            }
         }
     };
     this.addTable = function (table) {
@@ -49,9 +56,14 @@ ExcelTable.Toolbar = function () {
 
 ExcelTable.toolbar = {
     items: {
+        'export': {
+            className: 'export',
+            icon: 'icon iconfont icon-export',
+            children: ['export-raw', 'export-csv']
+        },
         'export-raw': {
             className: 'export-raw',
-            icon: 'icon iconfont icon-export',
+            icon: 'icon iconfont icon-file-json',
             handle: function (e) {
                 var txt = this.active.action.export();
                 var blob = new Blob([JSON.stringify(txt)]);
@@ -70,8 +82,8 @@ ExcelTable.toolbar = {
                 downloadURI(URL.createObjectURL(blob), (new Date()).getTime() + '.csv');
             }
         },
-        'import-raw': {
-            className: 'import-raw',
+        'import': {
+            className: 'import',
             icon: 'icon iconfont icon-import',
             handle: function (e) {
                 var input = $('<input type="file">'),
@@ -144,6 +156,20 @@ ExcelTable.toolbar = {
             icon: 'icon iconfont icon-row-append',
             handle: function (e) {
                 this.active.action.insertRow('append').render();
+            }
+        },
+        'sort-asc': {
+            className: 'sort-asc',
+            icon: 'icon iconfont icon-sort-by-asc',
+            handle: function (e) {
+                this.active.action.sort('asc').render();
+            }
+        },
+        'sort-desc': {
+            className: 'sort-desc',
+            icon: 'icon iconfont icon-sort-by-desc',
+            handle: function (e) {
+                this.active.action.sort('desc').render();
             }
         }
     }

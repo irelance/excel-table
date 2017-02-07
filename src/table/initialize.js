@@ -241,6 +241,18 @@ ExcelTable.table.initialize = function (options) {
             )
             ) {
                 unit.trigger('dblclick');
+            } else if (e.keyCode == 9) {//tab
+                if (table.selectLines.isOnRange(row, col + 1)) {
+                    col += 1;
+                } else if (table.selectLines.isOnRange(row + 1, table.selectLines.range.sCol)) {
+                    row += 1;
+                    col = table.selectLines.range.sCol;
+                } else {
+                    row = table.selectLines.range.sRow;
+                    col = table.selectLines.range.sCol;
+                }
+                table.selectLines.changeActive(row, col).render();
+                e.preventDefault();
             } else if (e.keyCode == 13) {//enter
                 e.preventDefault();
             } else if ((e.metaKey || e.ctrlKey) && e.keyCode == 67) {//copying
@@ -257,12 +269,8 @@ ExcelTable.table.initialize = function (options) {
                 table.history.undo();
             } else if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.keyCode == 90) {//redo
                 table.history.redo();
-            } else if ((e.metaKey || e.ctrlKey) && e.keyCode == 79) {//import
-                //todo open import view
             } else if ((e.metaKey || e.ctrlKey) && e.keyCode == 83) {//save
                 //todo save
-            } else if ((e.metaKey || e.ctrlKey) && e.keyCode == 69) {//export
-                //todo export
             } else {//default
                 console.log(e.keyCode);
             }
