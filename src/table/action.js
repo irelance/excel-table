@@ -39,8 +39,18 @@ ExcelTable.table.Action = function (parent) {
             var CRLF = this.getCRLF(txt);
             var rows = txt.split(CRLF),
                 cols = [];
+            var extraRows = sRow + rows.length - parent.rows;
+            if (extraRows > 0) {
+                parent.action.insertRow('append', extraRows);
+                parent.dimOne2Two();
+            }
             rows.forEach(function (v, i) {
                 cols = v.split("\t");
+                var extraCols = sCol + cols.length - parent.columns;
+                if (extraCols > 0) {
+                    parent.action.insertColumn('append', extraCols);
+                    parent.dimOne2Two();
+                }
                 cols.forEach(function (v, j) {
                     if (parent.result[sRow + i] && parent.result[sRow + i][sCol + j]) {
                         ExcelTable.unit.setValue(parent.result[sRow + i][sCol + j], v);
@@ -171,8 +181,15 @@ ExcelTable.table.Action = function (parent) {
             list.push(parent.result[i][parent.selectLines.active.col]);
         }
         list.sort(function (a, b) {
+            if (a.result == '' && b.result != '') {
+                return 1;
+            } else if (a.result != '' && b.result == '') {
+                return -1;
+            }
             if (typeof a.result != 'number' && typeof b.result == 'number') {
                 return type;
+            } else if (typeof a.result == 'number' && typeof b.result != 'number') {
+                return -type
             }
             return a.result == b.result ? 0 : a.result > b.result ? type : -type;
         });

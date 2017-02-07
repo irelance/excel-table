@@ -70,15 +70,20 @@ ExcelTable.table.initialize = function (options) {
             e.stopPropagation();
         })
         .on('mousedown', '.excel-table-unit', function (e) {
-            var unit = $(this);
-            if (e.button == 0 || (e.button == 2 && !unit.hasClass('active'))) {
+            var unit = $(this),
+                row = unit.data('row'),
+                col = unit.data('col'),
+                isOnRange = unit.hasClass('active');
+            if (e.button == 0 && e.altKey && isOnRange) {
+                table.selectLines.changeActive(row, col).render();
+                return false;
+            }
+            if (e.button == 0 || (e.button == 2 && !isOnRange)) {
                 if (!table.changeLines.status) {
                     if (table.selectLines.status) {
                         $(this).trigger('mouseup');
                     } else {
-                        var row = unit.data('row'),
-                            col = unit.data('col'),
-                            rows = table.table.find('.excel-table-row'),
+                        var rows = table.table.find('.excel-table-row'),
                             cols = table.table.find('.excel-table-col'),
                             units = table.table.find('.excel-table-unit');
                         rows.removeClass('active');

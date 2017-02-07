@@ -138,10 +138,10 @@ ExcelTable.toolbar = {
             className: 'paste',
             icon: 'icon iconfont icon-paste',
             handle: function (e) {
+                // can not paste from system clipboard
                 var table = this.active,
                     txt = table.target.find('.clipboard').val();
-                table.action.private.pasteText(table.selectLines.active.row, table.selectLines.active.col, txt);
-                table.render();
+                table.action.paste(txt).render();
             }
         },
         'append-column': {
