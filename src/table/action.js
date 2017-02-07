@@ -330,7 +330,7 @@ ExcelTable.table.Action = function (parent) {
             }
             err = (last - first) / (number - 1) * number;
             err = err ? err : 0;
-            for (i = eRange.sCol; i < sRange.sCol; i++) {
+            for (i = sRange.sCol - 1; i >= eRange.sCol; i--) {
                 switch (parent.result[row][i + length].type) {
                     case 'function':
                         ExcelTable.unit.setValue(parent.result[row][i], parent.result[row][i + length].value);
@@ -367,7 +367,7 @@ ExcelTable.table.Action = function (parent) {
             }
             err = (last - first) / (number - 1) * number;
             err = err ? err : 0;
-            for (i = eRange.sRow; i < sRange.sRow; i++) {
+            for (i = sRange.sRow - 1; i >= eRange.sRow; i--) {
                 switch (parent.result[i + length][col].type) {
                     case 'function':
                         ExcelTable.unit.setValue(parent.result[i][col], parent.result[i + length][col].value);
