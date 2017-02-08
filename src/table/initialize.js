@@ -3,7 +3,9 @@
  */
 
 ExcelTable.table.initialize = function (options) {
-    var table = this;
+    var table = this,
+        excelTableColStatus = false,
+        excelTableRowStatus = false;
     this.target = $(options.target);
     this.target.html(ExcelTable.template.table);
     this.table = this.target.children('.excel-table-content');
@@ -286,23 +288,61 @@ ExcelTable.table.initialize = function (options) {
                 ExcelTable.template.input(input);
             }
         })
-        .on('click', '.excel-table-col', function (e) {
-            var col = $(this).data('col');
-            table.selectLines.changeActive(0, col).changeRange(table.range.eRow, col).render();
+        .on('mousedown', '.excel-table-col', function (e) {
+            if (e.button == 0) {
+                if (!excelTableColStatus) {
+                    var col = $(this).data('col');
+                    table.selectLines.changeActive(0, col).changeRange(table.range.eRow, col).render();
+                    excelTableColStatus = true;
+                } else {
+                    excelTableColStatus = false;
+                }
+            }
+        })
+        .on('mouseover', '.excel-table-col', function (e) {
+            if (excelTableColStatus) {
+                var col = $(this).data('col');
+                table.selectLines.changeRange(table.range.eRow, col).render();
+            }
+        })
+        .on('mouseup', '.excel-table-col', function (e) {
+            excelTableColStatus = false;
         })
         .on('contextmenu', '.excel-table-col', function (e) {
-            $(this).trigger('click');
+            var self = $(this);
+            if (!self.hasClass('active')) {
+                var col = self.data('col');
+                table.selectLines.changeActive(0, col).changeRange(table.range.eRow, col).render();
+            }
             e.preventDefault();
-            //e.stopPropagation();
         })
-        .on('click', '.excel-table-row', function (e) {
-            var row = $(this).data('row');
-            table.selectLines.changeActive(row, 0).changeRange(row, table.range.eCol).render();
+        .on('mousedown', '.excel-table-row', function (e) {
+            if (e.button == 0) {
+                if (!excelTableRowStatus) {
+                    var row = $(this).data('row');
+                    table.selectLines.changeActive(row, 0).changeRange(row, table.range.eCol).render();
+                    excelTableRowStatus = true;
+                } else {
+                    excelTableRowStatus = false;
+                }
+            }
+        })
+        .on('mouseover', '.excel-table-row', function (e) {
+            if (excelTableRowStatus) {
+                var row = $(this).data('row');
+                table.selectLines.changeRange(row, table.range.eCol).render();
+            }
+        })
+        .on('mouseup', '.excel-table-row', function (e) {
+            excelTableRowStatus = false;
         })
         .on('contextmenu', '.excel-table-row', function (e) {
-            $(this).trigger('click');
+            var self = $(this);
+            if (!self.hasClass('active')) {
+                var row = self.data('row');
+                table.selectLines.changeActive(row, 0).changeRange(row, table.range.eCol).render();
+            }
             e.preventDefault();
-            //e.stopPropagation();
         })
         .on('click', '.excel-table-dig', function (e) {
             table.selectLines.changeActive(0, 0).changeRange(table.range.eRow, table.range.eCol).render();
@@ -323,7 +363,7 @@ ExcelTable.table.initialize = function (options) {
         });
     if (typeof ContextMenu == 'function') {
         var CM = new ContextMenu();
-        CM.attach('.excel-table-col,.excel-table-row', [
+        CM.attach('.excel-table-col,.excel-table-row,.excel-table-unit', [
             {
                 icon: 'icon iconfont icon-cut',
                 text: "cut",
@@ -350,8 +390,10 @@ ExcelTable.table.initialize = function (options) {
                     return CM.context.hasClass('excel-table-col');
                 },
                 action: function () {
-                    var col = CM.context.data('col');
-                    table.action.insertColumn(col).render();
+                    table.action.insertColumn(
+                        table.selectLines.active.sCol,
+                        table.selectLines.range.columns
+                    ).render();
                 }
             }, {
                 icon: 'icon iconfont icon-row-insert',
@@ -360,8 +402,10 @@ ExcelTable.table.initialize = function (options) {
                     return CM.context.hasClass('excel-table-row');
                 },
                 action: function () {
-                    var row = CM.context.data('row');
-                    table.action.insertRow(row).render();
+                    table.action.insertRow(
+                        table.selectLines.active.sRow,
+                        table.selectLines.range.rows
+                    ).render();
                 }
             }, {
                 text: "delete",

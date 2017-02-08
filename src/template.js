@@ -5,6 +5,7 @@
 ExcelTable.template = {
     table: '<div class="excel-table-toolbar"></div>' +
     '<div class="excel-table-search"><input class="key"><div class="break"><i class="icon iconfont icon-function">&nbsp;</i></div><input class="value"></div>' +
+    '<textarea class="clipboard"></textarea>' +
     '<div class="excel-table-content">' +
     '<div class="excel-table-select-lines">' +
     '<div class="w"></div><div class="s"></div><div class="a"></div><div class="d"></div>' +
@@ -13,8 +14,7 @@ ExcelTable.template = {
     '<div class="excel-table-change-lines">' +
     '<div class="w"></div><div class="s"></div><div class="a"></div><div class="d"></div>' +
     '</div>' +
-    '</div>' +
-    '<textarea class="clipboard"></textarea>',
+    '</div>',
     unit: function (unit) {
         return '<td><div class="excel-table-unit" data-row="' + unit.row +
             '" data-col="' + unit.column + '" tabindex="1" contenteditable="true">' + unit.result +
