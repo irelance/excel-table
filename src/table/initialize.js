@@ -320,5 +320,60 @@ ExcelTable.table.initialize = function (options) {
         })
         .on('click', function () {
             table.selectLines.getActiveView();
-        })
+        });
+    if (typeof ContextMenu == 'function') {
+        var CM = new ContextMenu();
+        CM.attach('.excel-table-col,.excel-table-row', [
+            {
+                icon: 'icon iconfont icon-cut',
+                text: "cut",
+                action: function () {
+                    table.action.copy().action.delete().render();
+                }
+            }, {
+                icon: 'icon iconfont icon-copy',
+                text: "copy",
+                action: function () {
+                    table.action.copy();
+                }
+            }, {
+                icon: 'icon iconfont icon-paste',
+                text: "paste",
+                action: function () {
+                    // can not paste from system clipboard
+                    table.action.paste(table.target.find('.clipboard').val()).render();
+                }
+            }, {divider: true}, {
+                icon: 'icon iconfont icon-column-insert',
+                text: "insert",
+                display: function () {
+                    return CM.context.hasClass('excel-table-col');
+                },
+                action: function () {
+                    var col = CM.context.data('col');
+                    table.action.insertColumn(col).render();
+                }
+            }, {
+                icon: 'icon iconfont icon-row-insert',
+                text: "insert",
+                display: function () {
+                    return CM.context.hasClass('excel-table-row');
+                },
+                action: function () {
+                    var row = CM.context.data('row');
+                    table.action.insertRow(row).render();
+                }
+            }, {
+                text: "delete",
+                action: function () {
+                    //to do
+                }
+            }, {
+                text: "clear",
+                action: function () {
+                    table.action.delete().render();
+                }
+            }
+        ]);
+    }
 };
