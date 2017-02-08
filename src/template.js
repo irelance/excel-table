@@ -15,6 +15,14 @@ ExcelTable.template = {
     '<div class="w"></div><div class="s"></div><div class="a"></div><div class="d"></div>' +
     '</div>' +
     '</div>',
+    tableHeader: function (table) {
+        table.find('.excel-table-col').css('top', table[0].scrollTop);
+        table.find('.excel-table-row').css('left', table[0].scrollLeft);
+        table.find('.excel-table-dig').css({
+            'top': table[0].scrollTop,
+            'left': table[0].scrollLeft
+        });
+    },
     unit: function (unit) {
         return '<td><div class="excel-table-unit" data-row="' + unit.row +
             '" data-col="' + unit.column + '" tabindex="1" contenteditable="true">' + unit.result +

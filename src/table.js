@@ -52,6 +52,7 @@ ExcelTable.Table = function () {
         result = '<table>' + header + result + '</table>';
         this.table.find('table').remove();
         this.table.append(result);
+        ExcelTable.template.tableHeader(this.table);
         this.selectLines.render();
         if (this.history.canRecord) {
             this.history.change();
@@ -90,7 +91,7 @@ ExcelTable.Table = function () {
         var $col = ExcelTable.calculator.functions.finds.column.bind(finder);
         var $range = ExcelTable.calculator.functions.finds.range.bind(finder);
         for (var i in ExcelTable.calculator.functions.public) {
-            eval('var ' + i.toUpperCase() + '=ExcelTable.calculator.functions.public.' + i);
+            eval('var ' + i.toUpperCase() + '=' + ExcelTable.calculator.functions.public[i]);
         }
         if (unit.type == 'function') {
             var result;

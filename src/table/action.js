@@ -92,6 +92,7 @@ ExcelTable.table.Action = function (parent) {
     };
     this.paste = function (txt) {
         this.private.pasteText(parent.selectLines.active.sRow, parent.selectLines.active.sCol, txt);
+        parent.selectLines.changeActive(parent.selectLines.active.sRow, parent.selectLines.active.sCol);
         return parent;
     };
     this.import = function (mixed) {

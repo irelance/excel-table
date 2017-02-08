@@ -66,6 +66,7 @@ ExcelTable.table.initialize = function (options) {
                 col = unit.data('col');
             ExcelTable.unit.setValue(table.result[row][col], $(this).val());
             table.render();
+            table.selectLines.changeActive(table.selectLines.active.sRow, table.selectLines.active.sCol);
             e.stopPropagation();
         })
         .on('mousedown dblclick click', 'input', function (e) {
@@ -276,12 +277,7 @@ ExcelTable.table.initialize = function (options) {
         })
         .on('scroll', function (e) {
             var self = $(this);
-            self.find('.excel-table-col').css('top', this.scrollTop);
-            self.find('.excel-table-row').css('left', this.scrollLeft);
-            self.find('.excel-table-dig').css({
-                'top': this.scrollTop,
-                'left': this.scrollLeft
-            });
+            ExcelTable.template.tableHeader(self);
             var unit = table.selectLines.getActiveView();
             var input = unit.find('input');
             if (input.length) {

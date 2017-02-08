@@ -100,15 +100,34 @@ ExcelTable.calculator = {
             }
         },
         public: {
-            sum: function (arr) {
-                arr = ExcelTable.calculator.functions.private.package(arr);
-                var result = 0;
-                arr.forEach(function (v) {
-                    v = parseFloat(v);
-                    result += v;
-                });
-                return result;
-            }
+            sum: 'function (arr) {\
+                arr = ExcelTable.calculator.functions.private.package(arr);\
+                var result = 0;\
+                arr.forEach(function (v) {\
+                    if (typeof v != "number") {\
+                        v = parseFloat(v);\
+                        if (isNaN(v)) {\
+                            v = 0;\
+                        }\
+                    }\
+                    result += v;\
+                });\
+                return result;\
+            }',
+            count: 'function (arr) {\
+                arr = ExcelTable.calculator.functions.private.package(arr);\
+                var result = 0;\
+                arr.forEach(function (v) {\
+                    v = parseFloat(v);\
+                    if (!isNaN(v)) {\
+                        result++;\
+                    }\
+                });\
+                return result;\
+            }',
+            avg: 'function (arr) {\
+                return SUM(arr) / COUNT(arr);\
+            }'
         }
     }
 };
