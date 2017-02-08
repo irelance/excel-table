@@ -181,6 +181,31 @@ ExcelTable.table.Action = function (parent) {
         });
         return parent;
     };
+    this.deleteRow = function (start, end) {
+        if (start > end) {
+            [start, end] = [end, start];
+        }
+        if (start < 0) {
+            start = 0;
+        }
+        if (end > parent.range.eRow) {
+            end = parent.range.eRow;
+        }
+        var number = end - start + 1;
+        for (i = end + 1; i <= parent.range.eRow; i++) {
+            for (j = 0; j < parent.range.columns; j++) {
+                parent.result[i][j].row -= number;
+            }
+        }
+        parent.result.splice(start, number);
+        parent.dimTwo2One();
+        parent.range.eRow -= number;
+        parent.range.rows -= number;
+        if (!parent.units.length) {
+            this.insertRow(0);
+        }
+        return parent;
+    };
     this.insertRow = function (active, number) {
         var i, j;
         if (active < 0 && active >= -parent.range.rows) {
@@ -206,6 +231,33 @@ ExcelTable.table.Action = function (parent) {
         }
         parent.range.eRow += number;
         parent.range.rows += number;
+        return parent;
+    };
+    this.deleteColumn = function (start, end) {
+        if (start > end) {
+            [start, end] = [end, start];
+        }
+        if (start < 0) {
+            start = 0;
+        }
+        if (end > parent.range.eCol) {
+            end = parent.range.eCol;
+        }
+        var number = end - start + 1;
+        for (i = 0; i <= parent.range.eRow; i++) {
+            for (j = end + 1; j < parent.range.columns; j++) {
+                parent.result[i][j].column -= number;
+            }
+        }
+        parent.result.forEach(function (row) {
+            row.splice(start, number);
+        });
+        parent.dimTwo2One();
+        parent.range.eCol -= number;
+        parent.range.columns -= number;
+        if (!parent.units.length) {
+            this.insertColumn(0);
+        }
         return parent;
     };
     this.insertColumn = function (active, number) {

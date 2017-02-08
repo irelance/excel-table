@@ -392,6 +392,18 @@ ExcelTable.table.initialize = function (options) {
                     ).render();
                 }
             }, {
+                icon: 'icon iconfont icon-column-delete',
+                text: "delete",
+                display: function () {
+                    return CM.context.hasClass('excel-table-col');
+                },
+                action: function () {
+                    table.action.deleteColumn(
+                        table.selectLines.range.sCol,
+                        table.selectLines.range.eCol
+                    ).render();
+                }
+            }, {
                 icon: 'icon iconfont icon-row-insert',
                 text: "insert",
                 display: function () {
@@ -404,9 +416,16 @@ ExcelTable.table.initialize = function (options) {
                     ).render();
                 }
             }, {
+                icon: 'icon iconfont icon-row-delete',
                 text: "delete",
+                display: function () {
+                    return CM.context.hasClass('excel-table-row');
+                },
                 action: function () {
-                    //to do
+                    table.action.deleteRow(
+                        table.selectLines.range.sRow,
+                        table.selectLines.range.eRow
+                    ).render();
                 }
             }, {
                 text: "clear",

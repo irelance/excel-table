@@ -21,6 +21,14 @@ ExcelTable.Table = function () {
             this.result[v.row][v.column] = v;
         }.bind(this));
     };
+    this.dimTwo2One = function () {
+        this.units = [];
+        this.result.forEach(function (rows) {
+            rows.forEach(function (unit) {
+                this.units.push(unit);
+            }.bind(this));
+        }.bind(this));
+    };
     this.createUnit = function (row, column) {
         var unit = new ExcelTable.Unit(row, column);
         unit.id = this.units.length;
