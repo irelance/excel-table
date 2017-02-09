@@ -14,63 +14,55 @@ ExcelTable.calculator = {
                 }
                 return this.result[row][column].result;
             },
-            row: function (row, range) {
+            row: function (start, end) {
                 var result = [];
-                if (!range) {
-                    range = [];
+                if (start > end) {
+                    [start, end] = [end, start];
                 }
-                if (!range[0]) {
-                    range[0] = 0;
+                if (end > this.range.eRow) {
+                    end = this.range.eRow;
                 }
-                if (range[1] == undefined) {
-                    range[1] = this.range.eCol;
-                }
-                if (this.origin.row == row && this.origin.column >= range[0] && this.origin.column <= range[1]) {
+                if (this.origin.row >= start && this.origin.row <= end) {
                     return NaN;
                 }
-                for (var i = range[0]; i <= range[1]; i++) {
-                    result.push(this.calculate(this.result[row][i]));
+                for (var i = start; i <= end; i++) {
+                    for (var j = 0; j < this.range.columns; j++) {
+                        result.push(this.calculate(this.result[i][j]));
+                    }
                 }
                 return result;
             },
-            column: function (column, range) {
+            column: function (start, end) {
                 var result = [];
-                if (!range) {
-                    range = [];
+                if (start > end) {
+                    [start, end] = [end, start];
                 }
-                if (!range[0]) {
-                    range[0] = 0;
+                if (end > this.range.eCol) {
+                    end = this.range.eCol;
                 }
-                if (range[1] == undefined) {
-                    range[1] = this.range.eRow;
-                }
-                if (this.origin.column == column && this.origin.row >= range[0] && this.origin.row <= range[1]) {
+                if (this.origin.column >= start && this.origin.column <= end) {
                     return NaN;
                 }
-                for (var j = range[0]; j <= range[1]; j++) {
-                    result.push(this.calculate(this.result[j][column]));
+                for (var i = start; i <= end; i++) {
+                    for (var j = 0; j < this.range.rows; j++) {
+                        result.push(this.calculate(this.result[j][i]));
+                    }
                 }
                 return result;
             },
             range: function (start, end) {
                 var result = [], i, j;
-                if (!start[0]) {
-                    start[0] = 0;
-                }
-                if (!start[1]) {
-                    start[1] = 0;
-                }
-                if (end[0] == undefined) {
-                    end[0] = this.range.eRow;
-                }
-                if (end[1] == undefined) {
-                    end[1] = this.range.eCol;
-                }
                 if (start[0] > end[0]) {
                     [start[0], end[0]] = [end[0], start[0]];
                 }
                 if (start[1] > end[1]) {
                     [start[1], end[1]] = [end[1], start[1]];
+                }
+                if (end[0] > this.range.eRow) {
+                    end[0] = this.range.eRow;
+                }
+                if (end[1] > this.range.eCol) {
+                    end[1] = this.range.eCol;
                 }
                 if (this.origin.column >= start[1] &&
                     this.origin.column <= end[1] &&

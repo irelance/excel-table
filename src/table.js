@@ -54,7 +54,7 @@ ExcelTable.Table = function () {
         result += '</tbody>';
         var header = '<thead><tr><th class="excel-table-dig"></th>';
         for (var i = 0; i < this.range.columns; i++) {
-            header += '<th class="excel-table-col" data-col="' + i + '">' + i + '</th>';
+            header += '<th class="excel-table-col" data-col="' + i + '">' + ExcelTable.unit.convertDSTo26BS(i) + '</th>';
         }
         header += '</tr></thead>';
         result = '<table>' + header + result + '</table>';
@@ -79,21 +79,6 @@ ExcelTable.Table = function () {
             range: this.range,
             origin: unit
         };
-        var $ = function (row, column) {
-            var type = typeof row + '-' + typeof column;
-            switch (type) {
-                case 'number-number':
-                    return $one(row, column);
-                case 'number-object':
-                    return $row(row, column);
-                case 'object-number':
-                    return $col(column, row);
-                case 'object-object':
-                    return $range(row, column);
-                default:
-                    return NaN;
-            }
-        };
         var $one = ExcelTable.calculator.functions.finds.one.bind(finder);
         var $row = ExcelTable.calculator.functions.finds.row.bind(finder);
         var $col = ExcelTable.calculator.functions.finds.column.bind(finder);
@@ -104,7 +89,7 @@ ExcelTable.Table = function () {
         if (unit.type == 'function') {
             var result;
             try {
-                eval('result' + unit.value);
+                eval('result' + ExcelTable.unit.parsing(unit.value));
             } catch (error) {
                 console.log(error);
                 result = NaN;
