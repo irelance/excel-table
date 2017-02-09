@@ -31,6 +31,7 @@ ExcelTable.table.ChangeLines = function (parent) {
             this.eRange.eRow = parent.range.eRow;
             this.eRange.sRow = this.eRange.eRow + this.sRange.sRow - this.sRange.eRow;
         }
+        this.eRange.setRange(this.eRange.sRow, this.eRange.sCol, this.eRange.eRow, this.eRange.eCol);
         return this;
     };
     this.render = function (row, col) {
@@ -43,11 +44,11 @@ ExcelTable.table.ChangeLines = function (parent) {
         ExcelTable.template.subTable.outLine(this);
         return this;
     };
-    this.afterAction = function () {
+    this.mergeRange = function () {
         var select = parent.selectLines;
         select.range = $.extend(true, select.range, this.eRange);
         this.sRange = $.extend(true, this.sRange, this.eRange);
-        select.active.setRange(select.range.sRow,select.range.sCol);
+        select.active.setRange(select.range.sRow, select.range.sCol);
         return parent;
     };
     this.dot = function (row, col) {
@@ -64,7 +65,6 @@ ExcelTable.table.ChangeLines = function (parent) {
         } else {
             this.direction = 'vertical';
         }
-        this.eRange = $.extend(true, this.eRange, this.sRange);
         if (this.direction == 'horizontal') {
             if (this.sRange.eCol <= col) {
                 this.type = 'increase';
@@ -88,6 +88,7 @@ ExcelTable.table.ChangeLines = function (parent) {
                 this.eRange.eRow = row;
             }
         }
+        this.eRange.setRange(this.eRange.sRow, this.eRange.sCol, this.eRange.eRow, this.eRange.eCol);
         return this;
     };
 };

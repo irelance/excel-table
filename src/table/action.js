@@ -287,152 +287,140 @@ ExcelTable.table.Action = function (parent) {
         parent.range.columns += number;
         return parent;
     };
-    this.increaseHorizontal = function () {
-        var iHorizontal = function (row, sRange, eRange) {
-            var length = 0,
-                number = 0,
-                first = 0,
-                last = 0,
-                i, err;
-            for (i = sRange.sCol; i <= sRange.eCol; i++) {
-                if (parent.result[row][i].type == 'number') {
-                    last = parent.result[row][i].result;
+    this.autoFillRight = function (length) {
+        var err, number, first, last, i, j, end, selectRange = parent.selectLines.range;
+        for (j = selectRange.sRow; j <= selectRange.eRow; j++) {
+            number = 0;
+            first = 0;
+            last = 0;
+            for (i = selectRange.sCol; i <= selectRange.eCol; i++) {
+                if (parent.result[j][i].type == 'number') {
+                    last = parent.result[j][i].result;
                     if (!number) {
                         first = last;
                     }
                     number++;
                 }
-                length++;
             }
             err = (last - first) / (number - 1) * number;
             err = err ? err : 0;
-            for (i = sRange.eCol + 1; i <= eRange.eCol; i++) {
-                switch (parent.result[row][i - length].type) {
+            for (i = selectRange.eCol + 1, end = selectRange.eCol + length; i <= end; i++) {
+                var unit = parent.result[j][i - selectRange.columns];
+                switch (unit.type) {
                     case 'function':
-                        ExcelTable.unit.setValue(parent.result[row][i], parent.result[row][i - length].value);
+                        ExcelTable.unit.setValue(parent.result[j][i], unit.value);
                         break;
                     case 'number':
-                        ExcelTable.unit.setValue(parent.result[row][i], parent.result[row][i - length].value + err);
+                        ExcelTable.unit.setValue(parent.result[j][i], unit.value + err);
                         break;
                     default:
-                        ExcelTable.unit.setValue(parent.result[row][i], parent.result[row][i - length].value);
+                        ExcelTable.unit.setValue(parent.result[j][i], unit.value);
                         break;
                 }
             }
-        };
-        for (var j = parent.changeLines.eRange.sRow; j <= parent.changeLines.eRange.eRow; j++) {
-            iHorizontal(j, parent.changeLines.sRange, parent.changeLines.eRange);
         }
+        return parent;
     };
-    this.increaseVertical = function () {
-        var iVertical = function (col, sRange, eRange) {
-            var length = 0,
-                number = 0,
-                first = 0,
-                last = 0,
-                i, err;
-            for (i = sRange.sRow; i <= sRange.eRow; i++) {
-                if (parent.result[i][col].type == 'number') {
-                    last = parent.result[i][col].result;
+    this.autoFillBottom = function (length) {
+        var err, number, first, last, i, j, end, selectRange = parent.selectLines.range;
+        for (j = selectRange.sCol; j <= selectRange.eCol; j++) {
+            number = 0;
+            first = 0;
+            last = 0;
+            for (i = selectRange.sRow; i <= selectRange.eRow; i++) {
+                if (parent.result[i][j].type == 'number') {
+                    last = parent.result[i][j].result;
                     if (!number) {
                         first = last;
                     }
                     number++;
                 }
-                length++;
             }
             err = (last - first) / (number - 1) * number;
             err = err ? err : 0;
-            for (i = sRange.eRow + 1; i <= eRange.eRow; i++) {
-                switch (parent.result[i - length][col].type) {
+            for (i = selectRange.eRow + 1, end = selectRange.eRow + length; i <= end; i++) {
+                var unit = parent.result[i - selectRange.rows][j];
+                switch (unit.type) {
                     case 'function':
-                        ExcelTable.unit.setValue(parent.result[i][col], parent.result[i - length][col].value);
+                        ExcelTable.unit.setValue(parent.result[i][j], unit.value);
                         break;
                     case 'number':
-                        ExcelTable.unit.setValue(parent.result[i][col], parent.result[i - length][col].value + err);
+                        ExcelTable.unit.setValue(parent.result[i][j], unit.value + err);
                         break;
                     default:
-                        ExcelTable.unit.setValue(parent.result[i][col], parent.result[i - length][col].value);
+                        ExcelTable.unit.setValue(parent.result[i][j], unit.value);
                         break;
                 }
             }
-        };
-        for (var j = parent.changeLines.eRange.sCol; j <= parent.changeLines.eRange.eCol; j++) {
-            iVertical(j, parent.changeLines.sRange, parent.changeLines.eRange);
         }
+        return parent;
     };
-    this.decreaseHorizontal = function () {
-        var dHorizontal = function (row, sRange, eRange) {
-            var length = 0,
-                number = 0,
-                first = 0,
-                last = 0,
-                i, err;
-            for (i = sRange.sCol; i <= sRange.eCol; i++) {
-                if (parent.result[row][i].type == 'number') {
-                    last = parent.result[row][i].result;
+    this.autoFillLeft = function (length) {
+        var err, number, first, last, i, j, end, selectRange = parent.selectLines.range;
+        for (j = selectRange.sRow; j <= selectRange.eRow; j++) {
+            number = 0;
+            first = 0;
+            last = 0;
+            for (i = selectRange.sCol; i <= selectRange.eCol; i++) {
+                if (parent.result[j][i].type == 'number') {
+                    last = parent.result[j][i].result;
                     if (!number) {
                         first = last;
                     }
                     number++;
                 }
-                length++;
             }
             err = (last - first) / (number - 1) * number;
             err = err ? err : 0;
-            for (i = sRange.sCol - 1; i >= eRange.sCol; i--) {
-                switch (parent.result[row][i + length].type) {
+            for (i = selectRange.sCol - 1, end = selectRange.sCol - length; i >= end; i--) {
+                var unit = parent.result[j][i + selectRange.columns];
+                switch (unit.type) {
                     case 'function':
-                        ExcelTable.unit.setValue(parent.result[row][i], parent.result[row][i + length].value);
+                        ExcelTable.unit.setValue(parent.result[j][i], unit.value);
                         break;
                     case 'number':
-                        ExcelTable.unit.setValue(parent.result[row][i], parent.result[row][i + length].value - err);
+                        ExcelTable.unit.setValue(parent.result[j][i], unit.value - err);
                         break;
                     default:
-                        ExcelTable.unit.setValue(parent.result[row][i], parent.result[row][i + length].value);
+                        ExcelTable.unit.setValue(parent.result[j][i], unit.value);
                         break;
                 }
             }
-        };
-        for (var j = parent.changeLines.eRange.sRow; j <= parent.changeLines.eRange.eRow; j++) {
-            dHorizontal(j, parent.changeLines.sRange, parent.changeLines.eRange);
         }
+        return parent;
     };
-    this.decreaseVertical = function () {
-        var dVertical = function (col, sRange, eRange) {
-            var length = 0,
-                number = 0,
-                first = 0,
-                last = 0,
-                i, err;
-            for (i = sRange.sRow; i <= sRange.eRow; i++) {
-                if (parent.result[i][col].type == 'number') {
-                    last = parent.result[i][col].result;
+    this.autoFillTop = function (length) {
+        var err, number, first, last, i, j, end, selectRange = parent.selectLines.range;
+        for (j = selectRange.sCol; j <= selectRange.eCol; j++) {
+            number = 0;
+            first = 0;
+            last = 0;
+            for (i = selectRange.sRow; i <= selectRange.eRow; i++) {
+                if (parent.result[i][j].type == 'number') {
+                    last = parent.result[i][j].result;
                     if (!number) {
                         first = last;
                     }
                     number++;
                 }
-                length++;
             }
             err = (last - first) / (number - 1) * number;
             err = err ? err : 0;
-            for (i = sRange.sRow - 1; i >= eRange.sRow; i--) {
-                switch (parent.result[i + length][col].type) {
+            for (i = selectRange.sRow - 1, end = selectRange.sRow - length; i >= end; i--) {
+                var unit = parent.result[i + selectRange.rows][j];
+                switch (unit.type) {
                     case 'function':
-                        ExcelTable.unit.setValue(parent.result[i][col], parent.result[i + length][col].value);
+                        ExcelTable.unit.setValue(parent.result[i][j], unit.value);
                         break;
                     case 'number':
-                        ExcelTable.unit.setValue(parent.result[i][col], parent.result[i + length][col].value - err);
+                        ExcelTable.unit.setValue(parent.result[i][j], unit.value - err);
                         break;
                     default:
-                        ExcelTable.unit.setValue(parent.result[i][col], parent.result[i + length][col].value);
+                        ExcelTable.unit.setValue(parent.result[i][j], unit.value);
                         break;
                 }
             }
-        };
-        for (var j = parent.changeLines.eRange.sCol; j <= parent.changeLines.eRange.eCol; j++) {
-            dVertical(j, parent.changeLines.sRange, parent.changeLines.eRange);
         }
+        return parent;
     };
 };

@@ -31,11 +31,14 @@
     var toolbar = new ExcelTable.Toolbar();
     toolbar.init({
         target: '#table .excel-table-toolbar',
-        items: ['import', 'export', '|',
+        items: [
+            'import', 'export', '|',
             'undo', 'redo', '|',
             'cut', 'copy', 'paste', '|',
             'append-column', 'append-row', '|',
-            'sort-asc', 'sort-desc']
+            'sort-asc', 'sort-desc', '|',
+            'auto-fill'
+        ]
     });
     toolbar.addTable(table);
     t = table;

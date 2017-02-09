@@ -171,6 +171,39 @@ ExcelTable.toolbar = {
             handle: function (e) {
                 this.active.action.sort('desc').render();
             }
+        },
+        'auto-fill': {
+            className: 'auto-fill',
+            icon: 'icon iconfont icon-fill',
+            children: ['auto-fill-left', 'auto-fill-right', 'auto-fill-top', 'auto-fill-bottom']
+        },
+        'auto-fill-left': {
+            className: 'auto-fill-left',
+            icon: 'icon iconfont icon-fill-left',
+            handle: function (e) {
+                this.active.action.autoFillLeft(this.active.selectLines.range.sCol).render();
+            }
+        },
+        'auto-fill-right': {
+            className: 'auto-fill-right',
+            icon: 'icon iconfont icon-fill-right',
+            handle: function (e) {
+                this.active.action.autoFillRight(this.active.range.eCol - this.active.selectLines.range.eCol).render();
+            }
+        },
+        'auto-fill-top': {
+            className: 'auto-fill-top',
+            icon: 'icon iconfont icon-fill-top',
+            handle: function (e) {
+                this.active.action.autoFillTop(this.active.selectLines.range.sRow).render();
+            }
+        },
+        'auto-fill-bottom': {
+            className: 'auto-fill-bottom',
+            icon: 'icon iconfont icon-fill-bottom',
+            handle: function (e) {
+                this.active.action.autoFillBottom(this.active.range.eRow - this.active.selectLines.range.eRow).render();
+            }
         }
     }
 };

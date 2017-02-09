@@ -86,7 +86,9 @@ ExcelTable.table.initialize = function (options) {
                     if (table.selectLines.status) {
                         $(this).trigger('mouseup');
                     } else {
-                        table.selectLines.status = true;
+                        if (e.button == 0) {
+                            table.selectLines.status = true;
+                        }
                         table.selectLines.changeActive(row, col).changeRange(row, col).render();
                     }
                 }
@@ -136,20 +138,20 @@ ExcelTable.table.initialize = function (options) {
                         case 'increase':
                             switch (table.changeLines.direction) {
                                 case 'horizontal':
-                                    table.action.increaseHorizontal();
+                                    table.action.autoFillRight(table.changeLines.eRange.eCol - table.changeLines.sRange.eCol);
                                     break;
                                 case 'vertical':
-                                    table.action.increaseVertical();
+                                    table.action.autoFillBottom(table.changeLines.eRange.eRow - table.changeLines.sRange.eRow);
                                     break;
                             }
                             break;
                         case 'decrease':
                             switch (table.changeLines.direction) {
                                 case 'horizontal':
-                                    table.action.decreaseHorizontal();
+                                    table.action.autoFillLeft(table.changeLines.sRange.sCol - table.changeLines.eRange.sCol);
                                     break;
                                 case 'vertical':
-                                    table.action.decreaseVertical();
+                                    table.action.autoFillTop(table.changeLines.sRange.sRow - table.changeLines.eRange.sRow);
                                     break;
                             }
                             break;
@@ -174,11 +176,11 @@ ExcelTable.table.initialize = function (options) {
                             }
                             break;
                     }
-                    table.changeLines.afterAction().render();
+                    table.changeLines.mergeRange().render();
                     table.changeLines.status = false;
                     break;
                 case 'move':
-                    table.action.move(table.changeLines.eRange.sRow, table.changeLines.eRange.sCol).changeLines.afterAction().render();
+                    table.action.move(table.changeLines.eRange.sRow, table.changeLines.eRange.sCol).changeLines.mergeRange().render();
                     table.changeLines.status = false;
                     break;
             }
