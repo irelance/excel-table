@@ -1,0 +1,116 @@
+/**
+ * Created by irelance on 2017/2/9.
+ */
+.excel-table-content {
+    position: relative;
+    overflow: auto;
+}
+
+.excel-table-content table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.excel-table-content th {
+    z-index: 1;
+    box-shadow: inset 0 0 1px #000;
+    position: relative;
+    background: #f0f0f0;
+    cursor: default;
+}
+
+.excel-table-content th.active {
+    background: #f90;
+}
+
+.excel-table-content td {
+    box-shadow: inset 0 0 1px #000;
+}
+
+.excel-table-content .excel-table-dig {
+    z-index: 2;
+}
+
+.excel-table-row {
+    min-width: 25px;
+}
+
+.excel-table-unit {
+    cursor: cell;
+    overflow: hidden;
+    width: 72px;
+    height: 21px;
+    color: transparent;
+    text-shadow: 0 0 0 #000;
+}
+
+.excel-table-unit.select {
+    background: #f0f0f0;
+}
+
+.excel-table-unit.select.active {
+    background: #fff;
+}
+
+.w, .s {
+    position: absolute;
+    height: 2px;
+    cursor: move;
+}
+
+.a, .d {
+    position: absolute;
+    width: 2px;
+    cursor: move;
+}
+
+.dot {
+    cursor: crosshair;
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #000;
+}
+
+.excel-table-select-lines .w,
+.excel-table-select-lines .s,
+.excel-table-select-lines .a,
+.excel-table-select-lines .d {
+    background: #c70;
+}
+
+.excel-table-change-lines .w,
+.excel-table-change-lines .s,
+.excel-table-change-lines .a,
+.excel-table-change-lines .d {
+    background: #f90;
+}
+
+.clipboard {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 1px solid #f0f0f0;
+    padding: 0;
+}
+
+.excel-table-unit input {
+    display: inline-block;
+    position: absolute;
+}
+
+.excel-table-search {
+    background: #f0f0f0;
+    padding: 2px 0;
+}
+
+.excel-table-search .key {
+    text-align: center;
+    max-width: 80px;
+}
+
+.excel-table-search .break {
+    display: inline-block;
+    text-align: right;
+    width: 40px;
+}
