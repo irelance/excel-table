@@ -53,7 +53,7 @@ ExcelTable.template = {
             subTable.width = 0;
             cols.each(function (i) {
                 if (i >= sCol && i <= eCol) {
-                    subTable.width += $(this).width() + 2;
+                    subTable.width += $(this).width();
                 }
             });
         },
@@ -61,7 +61,7 @@ ExcelTable.template = {
             subTable.height = 0;
             rows.each(function (i) {
                 if (i >= sRow && i <= eRow) {
-                    subTable.height += $(this).height() + 2;
+                    subTable.height += $(this).height();
                 }
             });
         },
