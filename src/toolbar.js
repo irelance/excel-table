@@ -24,14 +24,14 @@ ExcelTable.Toolbar = function () {
             html += '<div class="toolbar-block"><ul>';
             block.forEach(function (v) {
                 if (v.children) {
-                    html += '<li><button class="' + v.className + '" title="' + v.className + '"><i class="' + v.icon + '"></i><i class="icon iconfont icon-down"></i></button><ul class="children">';
+                    html += '<li><button class="' + v.className + '" title="' + v.label + '"><i class="' + v.icon + '"></i><i class="icon iconfont icon-down"></i></button><ul class="children">';
                     v.children.forEach(function (vv) {
                         html += '<li><button class="' + ExcelTable.toolbar.items[vv].className +
-                            '"><i class="' + ExcelTable.toolbar.items[vv].icon + '"></i>' + ExcelTable.toolbar.items[vv].className + '</button></li>';
+                            '"><i class="' + ExcelTable.toolbar.items[vv].icon + '"></i>' + ExcelTable.toolbar.items[vv].label + '</button></li>';
                     });
                     html += '</ul></li>';
                 } else {
-                    html += '<li><button class="' + v.className + '" title="' + v.className + '"><i class="' + v.icon + '"></i></button></li>';
+                    html += '<li><button class="' + v.className + '" title="' + v.label + '"><i class="' + v.icon + '"></i></button></li>';
                 }
             });
             html += '</ul></div>';
@@ -57,11 +57,13 @@ ExcelTable.Toolbar = function () {
 ExcelTable.toolbar = {
     items: {
         'export': {
+            label: 'export',
             className: 'export',
             icon: 'icon iconfont icon-export',
             children: ['export-raw', 'export-csv']
         },
         'export-raw': {
+            label: 'export raw',
             className: 'export-raw',
             icon: 'icon iconfont icon-file-json',
             handle: function (e) {
@@ -71,6 +73,7 @@ ExcelTable.toolbar = {
             }
         },
         'export-csv': {
+            label: 'export csv',
             className: 'export-csv',
             icon: 'icon iconfont icon-file-csv',
             handle: function (e) {
@@ -83,6 +86,7 @@ ExcelTable.toolbar = {
             }
         },
         'import': {
+            label: 'import',
             className: 'import',
             icon: 'icon iconfont icon-import',
             handle: function (e) {
@@ -107,6 +111,7 @@ ExcelTable.toolbar = {
             }
         },
         'undo': {
+            label: 'undo',
             className: 'undo',
             icon: 'icon iconfont icon-undo',
             handle: function (e) {
@@ -114,6 +119,7 @@ ExcelTable.toolbar = {
             }
         },
         'redo': {
+            label: 'redo',
             className: 'redo',
             icon: 'icon iconfont icon-redo',
             handle: function (e) {
@@ -121,6 +127,7 @@ ExcelTable.toolbar = {
             }
         },
         'cut': {
+            label: 'cut',
             className: 'cut',
             icon: 'icon iconfont icon-cut',
             handle: function (e) {
@@ -128,6 +135,7 @@ ExcelTable.toolbar = {
             }
         },
         'copy': {
+            label: 'copy',
             className: 'copy',
             icon: 'icon iconfont icon-copy',
             handle: function (e) {
@@ -135,6 +143,7 @@ ExcelTable.toolbar = {
             }
         },
         'paste': {
+            label: 'paste',
             className: 'paste',
             icon: 'icon iconfont icon-paste',
             handle: function (e) {
@@ -145,6 +154,7 @@ ExcelTable.toolbar = {
             }
         },
         'append-column': {
+            label: 'append column',
             className: 'append-column',
             icon: 'icon iconfont icon-column-append',
             handle: function (e) {
@@ -152,6 +162,7 @@ ExcelTable.toolbar = {
             }
         },
         'append-row': {
+            label: 'append row',
             className: 'append-row',
             icon: 'icon iconfont icon-row-append',
             handle: function (e) {
@@ -159,6 +170,7 @@ ExcelTable.toolbar = {
             }
         },
         'sort-asc': {
+            label: 'sort by asc',
             className: 'sort-asc',
             icon: 'icon iconfont icon-sort-by-asc',
             handle: function (e) {
@@ -166,6 +178,7 @@ ExcelTable.toolbar = {
             }
         },
         'sort-desc': {
+            label: 'sort by desc',
             className: 'sort-desc',
             icon: 'icon iconfont icon-sort-by-desc',
             handle: function (e) {
@@ -173,11 +186,13 @@ ExcelTable.toolbar = {
             }
         },
         'auto-fill': {
+            label: 'auto fill',
             className: 'auto-fill',
             icon: 'icon iconfont icon-fill',
-            children: ['auto-fill-left', 'auto-fill-right', 'auto-fill-top', 'auto-fill-bottom']
+            children: ['auto-fill-bottom', 'auto-fill-right', 'auto-fill-top', 'auto-fill-left']
         },
         'auto-fill-left': {
+            label: 'auto fill to left',
             className: 'auto-fill-left',
             icon: 'icon iconfont icon-fill-left',
             handle: function (e) {
@@ -185,6 +200,7 @@ ExcelTable.toolbar = {
             }
         },
         'auto-fill-right': {
+            label: 'auto fill to right',
             className: 'auto-fill-right',
             icon: 'icon iconfont icon-fill-right',
             handle: function (e) {
@@ -192,6 +208,7 @@ ExcelTable.toolbar = {
             }
         },
         'auto-fill-top': {
+            label: 'auto fill to top',
             className: 'auto-fill-top',
             icon: 'icon iconfont icon-fill-top',
             handle: function (e) {
@@ -199,10 +216,36 @@ ExcelTable.toolbar = {
             }
         },
         'auto-fill-bottom': {
+            label: 'auto fill to bottom',
             className: 'auto-fill-bottom',
             icon: 'icon iconfont icon-fill-bottom',
             handle: function (e) {
                 this.active.action.autoFillBottom(this.active.range.eRow - this.active.selectLines.range.eRow).render();
+            }
+        },
+        'paste-transform': {
+            label: 'paste & transform',
+            className: 'paste-transform',
+            icon: 'icon iconfont icon-transform',
+            handle: function (e) {
+                // can not paste from system clipboard
+                var table = this.active,
+                    rows = table.target.find('.clipboard').val().split("\n"),
+                    units = [];
+                rows.forEach(function (row, i) {
+                    row = row.split("\t");
+                    row.forEach(function (unit, j) {
+                        if (!units[j]) {
+                            units[j] = [];
+                        }
+                        units[j][i] = unit;
+                    })
+                });
+                units.forEach(function (rows, i) {
+                    units[i] = rows.join("\t");
+                });
+                units = units.join("\n");
+                table.action.paste(units).render();
             }
         }
     }

@@ -34,7 +34,7 @@
         items: [
             'import', 'export', '|',
             'undo', 'redo', '|',
-            'cut', 'copy', 'paste', '|',
+            'cut', 'copy', 'paste', 'paste-transform', '|',
             'append-column', 'append-row', '|',
             'sort-asc', 'sort-desc', '|',
             'auto-fill'
