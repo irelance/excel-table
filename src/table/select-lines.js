@@ -12,7 +12,7 @@ ExcelTable.table.SelectLines = function (parent) {
     this.range = new Rectangle();
     this.changeActive = function (row, col) {
         this.active.setRange(row, col);
-        parent.search.children('.key').val(row + ',' + col).data('value', row + ',' + col);
+        parent.search.children('.key').val(ExcelTable.unit.convertDSTo26BS(col) + row).data('value', row + ',' + col);
         parent.search.children('.value').val(parent.result[row][col].value);
         return this;
     };
@@ -55,7 +55,7 @@ ExcelTable.table.SelectLines = function (parent) {
         parent.toolbar ? parent.toolbar.active = parent : '';
         return unit;
     };
-    this.getActiveModel=function () {
+    this.getActiveModel = function () {
         return parent.result[this.active.sRow][this.active.sCol];
     }
 };

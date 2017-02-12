@@ -114,7 +114,6 @@ ExcelTable.Table = function () {
         if (remainHeight < tableMinHeight) {
             this.target.height(headerHeight + tableMinHeight);
             this.table.height(tableMinHeight);
-            console.log('test')
         } else {
             this.table.height(remainHeight);
         }

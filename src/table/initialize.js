@@ -31,11 +31,10 @@ ExcelTable.table.initialize = function (options) {
         })
         .on('change', '.key', function (e) {
             var self = $(this);
-            var search = self.val().split(',');
-            var int = /^[0-9]+$/;
-            if (search.length == 2 && search[0].match(int) && search[1].match(int)) {
-                var row = parseInt(search[0]),
-                    col = parseInt(search[1]);
+            var search = self.val().match(/([A-Z]+)([0-9]+)/);
+            if (search) {
+                var row = parseInt(search[2]),
+                    col = parseInt(ExcelTable.unit.convert26BSToDS(search[1]));
                 table.selectLines.changeActive(row, col).changeRange(row, col).render();
             } else {
                 self.val(self.data('value'));
