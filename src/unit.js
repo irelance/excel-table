@@ -66,7 +66,7 @@ ExcelTable.unit = {
                 } else if (matches = v.match(this.col)) {
                     exp[i] = '$col(' + ExcelTable.unit.convert26BSToDS(matches[1]) + ',' + ExcelTable.unit.convert26BSToDS(matches[2]) + ')';
                 } else if (matches = v.match(this.range)) {
-                    exp[i] = '$range([' + matches[2] + ',' + matches[4] + '],[' + ExcelTable.unit.convert26BSToDS(matches[1]) + ',' + ExcelTable.unit.convert26BSToDS(matches[3]) + '])';
+                    exp[i] = '$range([' + matches[2] + ',' + ExcelTable.unit.convert26BSToDS(matches[1]) + '],[' + matches[4] + ',' + ExcelTable.unit.convert26BSToDS(matches[3]) + '])';
                 }
             },
             render: function (words, v, i) {
