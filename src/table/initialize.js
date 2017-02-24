@@ -4,6 +4,7 @@
 
 ExcelTable.table.initialize = function (options) {
     var table = this,
+        unitInput = new ExcelTable.table.Input(table),
         excelTableColStatus = false,
         excelTableRowStatus = false;
     this.target = $(options.target);
@@ -42,6 +43,7 @@ ExcelTable.table.initialize = function (options) {
         });
     this.table
         .on('input', 'input', function (e) {
+            e.stopPropagation();
             ExcelTable.template.input($(this));
         })
         .on('keydown', 'input', function (e) {
@@ -52,23 +54,31 @@ ExcelTable.table.initialize = function (options) {
             switch (e.keyCode) {
                 case 27:
                     self.val(table.result[row][col].value);
-                    var triggerEvent = jQuery.Event('mousedown');
-                    triggerEvent.button = 0;
-                    unit.trigger(triggerEvent).trigger('mouseup');
+                    self.trigger('blur');
+                    break;
+                case 13:
+                    unitInput.canSelect = false;
+                    unitInput.checkStatus();
+                    if (!unitInput.canSelect) {
+                        self.trigger('blur');
+                    }
                     break;
             }
             e.stopPropagation();
         })
         .on('change', 'input', function (e) {
-            var unit = $(this).parent(),
-                row = unit.data('row'),
-                col = unit.data('col');
-            ExcelTable.unit.setValue(table.result[row][col], $(this).val());
-            table.render();
-            table.selectLines.changeActive(table.selectLines.active.sRow, table.selectLines.active.sCol);
             e.stopPropagation();
+            unitInput.checkStatus();
+            if (!unitInput.canSelect) {
+                var unit = $(this).parent(),
+                    row = unit.data('row'),
+                    col = unit.data('col');
+                ExcelTable.unit.setValue(table.result[row][col], $(this).val());
+                table.render();
+                table.selectLines.changeActive(table.selectLines.active.sRow, table.selectLines.active.sCol);
+            }
         })
-        .on('mousedown dblclick click', 'input', function (e) {
+        .on('mousedown dblclick click paste', 'input', function (e) {
             e.stopPropagation();
         })
         .on('mousedown', '.excel-table-unit', function (e) {
@@ -92,6 +102,12 @@ ExcelTable.table.initialize = function (options) {
                     }
                 }
             }
+            unitInput.checkStatus();
+            if (unitInput.canSelect) {
+                unitInput.getSelectRange();
+            } else {
+                unitInput.target.trigger('blur');
+            }
             return false;
         })
         .on('mousedown', '.dot', function (e) {
@@ -114,6 +130,10 @@ ExcelTable.table.initialize = function (options) {
                 col = unit.data('col');
             if (table.selectLines.status) {
                 table.selectLines.changeRange(row, col).render();
+                unitInput.checkStatus();
+                if (unitInput.canSelect) {
+                    unitInput.getSelectRange();
+                }
             }
             switch (table.changeLines.status) {
                 case 'dot':
@@ -189,16 +209,19 @@ ExcelTable.table.initialize = function (options) {
             var unit = $(this),
                 row = unit.data('row'),
                 col = unit.data('col');
-            var input = $('<input value="' + table.result[row][col].value + '"/>');
-            unit.html(input);
-            ExcelTable.template.input(input);
-            input.trigger('select');
+            unitInput.setValue(table.result[row][col].value);
+            unit.html(unitInput.target);
+            ExcelTable.template.input(unitInput.target);
+            unitInput.target.trigger('select');
         })
         .on('blur', 'input', function (e) {
-            var unit = $(this).parent(),
-                row = unit.data('row'),
-                col = unit.data('col');
-            unit.html(table.result[row][col].result.toString());
+            unitInput.checkStatus();
+            if (!unitInput.canSelect) {
+                var unit = $(this).parent(),
+                    row = unit.data('row'),
+                    col = unit.data('col');
+                unit.html(table.result[row][col].result.toString());
+            }
             e.stopPropagation();
         })
         .on('keydown', '.excel-table-unit', function (e) {
@@ -275,6 +298,10 @@ ExcelTable.table.initialize = function (options) {
                 console.log(e.keyCode);
             }
             e.stopPropagation();
+        })
+        .on('input', '.excel-table-unit', function (e) {
+            e.stopPropagation();
+            $(this).children('div').remove();//prevent contenteditable
         })
         .on('scroll', function (e) {
             var self = $(this);

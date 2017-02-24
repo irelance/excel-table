@@ -37,7 +37,7 @@ ExcelTable.table.SelectLines = function (parent) {
                 $(units[i + j * (cols.length)]).addClass('select');
             }
         }
-        this.getActiveView().addClass('active').trigger('focus');
+        this.getActiveView().addClass('active');
         ExcelTable.template.subTable.setWidth(this, cols, this.range.sCol, this.range.eCol);
         ExcelTable.template.subTable.setHeight(this, rows, this.range.sRow, this.range.eRow);
         ExcelTable.template.subTable.setPosition(this, units, this.range.sCol, this.range.sRow, cols.length);
@@ -48,8 +48,10 @@ ExcelTable.table.SelectLines = function (parent) {
         ExcelTable.template.subTable.outLine(this);
     };
     this.getActiveView = function () {
-        var unit = $(parent.table.find('.excel-table-unit')[this.active.sCol + this.active.sRow * parent.range.columns]);
-        if (!unit.find('input').length && !parent.table.find('.excel-table-unit:focus').length) {
+        var units = parent.table.find('.excel-table-unit'),
+            input = units.children('input'),
+            unit = $(units[this.active.sCol + this.active.sRow * parent.range.columns]);
+        if (!input.length) {
             unit.trigger('focus');
         }
         parent.toolbar ? parent.toolbar.active = parent : '';
