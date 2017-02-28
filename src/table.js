@@ -38,7 +38,7 @@ ExcelTable.Table = function () {
         this.dimOne2Two();
         var result = '<tbody>';
         this.result.forEach(function (row, i) {
-            result += '<tr><th class="excel-table-row" data-row="' + i + '">' + i + '</th>';
+            result += '<tr><th class="excel-table-row" data-row="' + i + '" height="' + this.rows[i] + 'px">' + i + '</th>';
             row.forEach(function (unit, j) {
                 this.times = 0;
                 try {
@@ -47,14 +47,14 @@ ExcelTable.Table = function () {
                     console.log(error);
                     unit.result = NaN;
                 }
-                result += ExcelTable.template.unit(unit);
+                result += ExcelTable.template.unit(unit, this.columns[j], this.rows[i]);
             }.bind(this));
             result += '</tr>';
         }.bind(this));
         result += '</tbody>';
         var header = '<thead><tr><th class="excel-table-dig"></th>';
         for (var i = 0; i < this.range.columns; i++) {
-            header += '<th class="excel-table-col" data-col="' + i + '">' + ExcelTable.unit.convertDSTo26BS(i) + '</th>';
+            header += '<th class="excel-table-col" data-col="' + i + '" width="' + this.columns[i] + 'px">' + ExcelTable.unit.convertDSTo26BS(i) + '<div class="column-resize-bar"></div></th>';
         }
         header += '</tr></thead>';
         result = '<table>' + header + result + '</table>';

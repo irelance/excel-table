@@ -23,9 +23,9 @@ ExcelTable.template = {
             'left': table[0].scrollLeft
         });
     },
-    unit: function (unit) {
+    unit: function (unit, width, height) {
         return '<td><div class="excel-table-unit" data-row="' + unit.row +
-            '" data-col="' + unit.column + '" tabindex="1" contenteditable="true">' + unit.result +
+            '" data-col="' + unit.column + '" tabindex="1" contenteditable="true" style="height:' + height + 'px;width:' + width + 'px;">' + unit.result +
             '</div></td>';
     },
     input: function (input) {

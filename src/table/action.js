@@ -100,7 +100,17 @@ ExcelTable.table.Action = function (parent) {
             case 'string':
                 break;
             case 'object':
-                parent.range.setRangeByDistance([0, 0], mixed.columns ? mixed.columns : 1, mixed.rows ? mixed.rows : 1);
+                if (typeof mixed.columns == 'number') {
+                    mixed.columns = (new Array(mixed.columns)).join(',').split(',').map(function () {
+                        return 72;//width 72px
+                    });
+                }
+                if (typeof mixed.rows == 'number') {
+                    mixed.rows = (new Array(mixed.rows)).join(',').split(',').map(function () {
+                        return 21;//height 21px
+                    });
+                }
+                parent.range.setRangeByDistance([0, 0], mixed.columns.length ? mixed.columns.length : 1, mixed.rows.length ? mixed.rows.length : 1);
                 parent.units = [];
                 for (var i = 0; i < parent.range.rows; i++) {
                     for (var j = 0; j < parent.range.columns; j++) {
@@ -115,12 +125,14 @@ ExcelTable.table.Action = function (parent) {
                 }
                 break;
         }
+        parent.columns = mixed.columns;
+        parent.rows = mixed.rows;
         return parent;
     };
     this.export = function () {
         var data = {
-            rows: parent.range.rows,
-            columns: parent.range.columns,
+            rows: parent.rows,
+            columns: parent.columns,
             units: []
         };
         parent.result.forEach(function (row, i) {

@@ -44,15 +44,17 @@ ExcelTable.table.Input = function (parent) {
         }
     };
     this.getSelectRange = function () {
+        this.canSelect = false;
         var range = parent.selectLines.range,
             insert = ExcelTable.unit.convertDSTo26BS(range.sCol) + range.sRow +
                 ':' + ExcelTable.unit.convertDSTo26BS(range.eCol) + range.eRow;
         this.value = this.value.split('');
-        this.value.splice(this.start - this.replaceLength, this.end, insert);
+        this.value.splice(this.start - this.replaceLength, this.end - this.start + this.replaceLength, insert);
         this.value = this.value.join('');
         this.setValue(this.value);
+        ExcelTable.template.input(this.target);
         this.target.trigger('focus');
-        this.target[0].selectionStart = this.start + insert.length;
-        this.target[0].selectionEnd = this.start + insert.length;
+        this.target[0].selectionStart = this.start - this.replaceLength + insert.length;
+        this.target[0].selectionEnd = this.start - this.replaceLength + insert.length;
     };
 };

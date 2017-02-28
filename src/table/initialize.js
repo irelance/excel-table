@@ -57,7 +57,6 @@ ExcelTable.table.initialize = function (options) {
                     self.trigger('blur');
                     break;
                 case 13:
-                    unitInput.canSelect = false;
                     unitInput.checkStatus();
                     if (!unitInput.canSelect) {
                         self.trigger('blur');
@@ -384,6 +383,23 @@ ExcelTable.table.initialize = function (options) {
         })
         .on('click', function () {
             table.selectLines.getActiveView();
+        })
+        .on('click', '.column-resize-bar', function (e) {
+            var self = $(this),
+                column = self.parent(),
+                col = column.data('col'),
+                width = column.width();
+            width = prompt('set width:', width);
+            column.width(width);
+            table.table.find('.excel-table-unit').each(function () {
+                var self = $(this),
+                    uCol = self.data('col');
+                if (uCol == col) {
+                    self.width(width);
+                }
+            });
+            table.columns[col] = width;
+            table.selectLines.render();
         });
     if (typeof ContextMenu == 'function') {
         var CM = new ContextMenu();

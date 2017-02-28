@@ -34,7 +34,7 @@ ExcelTable.table.ChangeLines = function (parent) {
         this.eRange.setRange(this.eRange.sRow, this.eRange.sCol, this.eRange.eRow, this.eRange.eCol);
         return this;
     };
-    this.render = function (row, col) {
+    this.render = function () {
         var rows = parent.table.find('.excel-table-row'),
             cols = parent.table.find('.excel-table-col'),
             units = parent.table.find('.excel-table-unit');
@@ -65,6 +65,7 @@ ExcelTable.table.ChangeLines = function (parent) {
         } else {
             this.direction = 'vertical';
         }
+        this.eRange=$.extend(this.eRange,this.sRange);
         if (this.direction == 'horizontal') {
             if (this.sRange.eCol <= col) {
                 this.type = 'increase';

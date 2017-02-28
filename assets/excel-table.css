@@ -119,3 +119,11 @@
     text-align: right;
     width: 40px;
 }
+
+.column-resize-bar {
+    float: right;
+    width: 3px;
+    height: 17px;
+    background: transparent;
+    cursor: col-resize;
+}
